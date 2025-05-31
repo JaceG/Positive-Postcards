@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { hotjarEvent } from '../../utils/hotjar';
+import ServiceExplainer from './components/ServiceExplainer/ServiceExplainer';
 import Hero from './components/Hero/Hero';
 import CustomerJourney from './components/CustomerJourney/CustomerJourney';
 import UseCases from './components/UseCases/UseCases';
@@ -25,6 +26,7 @@ const Home: React.FC = () => {
 	return (
 		<>
 			<Hero />
+			<ServiceExplainer />
 			<CustomerJourney />
 			<UseCases />
 			{showPromo && (
