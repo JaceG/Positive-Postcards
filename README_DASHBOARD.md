@@ -68,7 +68,7 @@ The Positive Postcards site now includes a user dashboard with magic link authen
 
 #### Production Recommendations:
 1. Use Redis or database for session storage
-2. Send magic links via email service (SendGrid, AWS SES, etc.)
+2. Send magic links via email service (AWS SES, Mailgun, etc.)
 3. Use cryptographically secure token generation
 4. Implement rate limiting on auth endpoints
 5. Add CSRF protection

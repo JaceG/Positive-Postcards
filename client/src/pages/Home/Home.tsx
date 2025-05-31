@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { hotjarEvent } from '../../utils/hotjar';
 import Hero from './components/Hero/Hero';
 import CustomerJourney from './components/CustomerJourney/CustomerJourney';
 import UseCases from './components/UseCases/UseCases';
@@ -11,8 +12,14 @@ import PromoOfferBanner from '../../components/PromoOfferBanner/PromoOfferBanner
 const Home: React.FC = () => {
 	const [showPromo, setShowPromo] = useState(true);
 
+	useEffect(() => {
+		// Track homepage visit
+		hotjarEvent('homepage_visited');
+	}, []);
+
 	const handlePromoExpire = () => {
 		setShowPromo(false);
+		hotjarEvent('homepage_promo_banner_expired');
 	};
 
 	return (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext';
@@ -12,9 +12,15 @@ import CheckoutSuccess from './pages/CheckoutSuccess/CheckoutSuccess';
 import Login from './pages/Login/Login';
 import AuthVerify from './pages/AuthVerify/AuthVerify';
 import Dashboard from './pages/Dashboard/Dashboard';
+import { initHotjar } from './utils/hotjar';
 import './App.css';
 
 function App() {
+	// Initialize Hotjar on app load
+	useEffect(() => {
+		initHotjar();
+	}, []);
+
 	return (
 		<AuthProvider>
 			<CartProvider>

@@ -11,6 +11,7 @@ import { useCart } from '../../contexts/CartContext';
 import { paymentAPI } from '../../utils/api';
 import { RecipientInfo, CartItem } from '../../types/cart.types';
 import { isTestMode } from '../../config/stripe';
+import { hotjarEvent } from '../../utils/hotjar';
 import AddressAutocomplete from '../../components/AddressAutocomplete/AddressAutocomplete';
 import UpsellModal from '../../components/UpsellModal/UpsellModal';
 import DownsellModal from '../../components/DownsellModal/DownsellModal';
@@ -194,17 +195,22 @@ const CheckoutForm: React.FC<{
 		if (!promoCode.trim()) return;
 
 		setPromoLoading(true);
+		hotjarEvent('checkout_promo_code_attempted');
+
 		try {
 			// For demo purposes, let's accept "SAVE10" for 10% off
 			if (promoCode.toUpperCase() === 'SAVE10') {
 				setPromoDiscount(0.1); // 10% discount
 				setError(null);
+				hotjarEvent('checkout_promo_code_applied_successfully');
 			} else {
 				setError('Invalid promo code');
 				setPromoDiscount(0);
+				hotjarEvent('checkout_promo_code_invalid');
 			}
 		} catch (err) {
 			setError('Error validating promo code');
+			hotjarEvent('checkout_promo_code_error');
 		} finally {
 			setPromoLoading(false);
 		}
@@ -242,13 +248,18 @@ const CheckoutForm: React.FC<{
 	const handleSubmit = async (event: React.FormEvent) => {
 		event.preventDefault();
 
+		// Track checkout attempt
+		hotjarEvent('checkout_form_submitted');
+
 		// Validate email first
 		if (!validateEmail(email)) {
+			hotjarEvent('checkout_email_validation_failed');
 			return;
 		}
 
 		// Show upsell modal for trial users who haven't attempted checkout yet
 		if (activePromo === 'trial' && !attemptedCheckout) {
+			hotjarEvent('checkout_upsell_shown_from_trial');
 			setShowUpsellModal(true);
 			setAttemptedCheckout(true);
 			return;
@@ -256,6 +267,7 @@ const CheckoutForm: React.FC<{
 
 		// Show downsell modal for regular price users who haven't seen an offer
 		if (!activePromo && !attemptedCheckout) {
+			hotjarEvent('checkout_upsell_shown_from_regular');
 			setShowUpsellModal(true);
 			setAttemptedCheckout(true);
 			return;
@@ -268,10 +280,14 @@ const CheckoutForm: React.FC<{
 		setIsProcessing(true);
 		setError(null);
 
+		// Track the start of payment processing
+		hotjarEvent('checkout_payment_processing_started');
+
 		const cardElement = elements.getElement(CardElement);
 		if (!cardElement) {
 			setError('Card element not found');
 			setIsProcessing(false);
+			hotjarEvent('checkout_card_element_error');
 			return;
 		}
 
@@ -281,6 +297,7 @@ const CheckoutForm: React.FC<{
 				// For multiple subscriptions, we'd typically create separate subscriptions
 				// or use a subscription with multiple items
 				console.log('Multiple subscriptions detected:', items);
+				hotjarEvent('checkout_multiple_subscriptions');
 			}
 
 			// For subscriptions, we'll use the first item's price
@@ -294,10 +311,15 @@ const CheckoutForm: React.FC<{
 			let priceId;
 			if (activePromo === 'trial') {
 				priceId = prices['promo_trial_7days']?.id;
+				hotjarEvent('checkout_trial_offer_processed');
 			} else if (activePromo === 'upsell') {
 				priceId = prices['promo_first_month_half']?.id;
+				hotjarEvent('checkout_upsell_offer_processed');
 			} else {
 				priceId = prices[`individual_${firstItem.billingCycle}`]?.id;
+				hotjarEvent(
+					`checkout_regular_${firstItem.billingCycle}_processed`
+				);
 			}
 
 			if (!priceId) {
@@ -324,8 +346,11 @@ const CheckoutForm: React.FC<{
 				});
 
 			if (pmError) {
+				hotjarEvent('checkout_payment_method_creation_failed');
 				throw new Error(pmError.message);
 			}
+
+			hotjarEvent('checkout_payment_method_created');
 
 			// Create subscription with metadata
 			const result = await paymentAPI.createSubscription({
@@ -349,7 +374,16 @@ const CheckoutForm: React.FC<{
 			});
 
 			if (result.error) {
+				hotjarEvent('checkout_subscription_creation_failed');
 				throw new Error(result.error);
+			}
+
+			// Track successful checkout
+			hotjarEvent('checkout_completed_successfully');
+
+			// Track gift purchases separately
+			if (isGift) {
+				hotjarEvent('checkout_gift_purchase_completed');
 			}
 
 			// Clear cart and redirect to success page
@@ -361,6 +395,7 @@ const CheckoutForm: React.FC<{
 				},
 			});
 		} catch (err: any) {
+			hotjarEvent('checkout_error_occurred');
 			setError(err.message || 'An error occurred during checkout');
 		} finally {
 			setIsProcessing(false);
@@ -374,9 +409,11 @@ const CheckoutForm: React.FC<{
 		setShowUpsellModal(false);
 		if (activePromo === 'trial') {
 			// Upgrade from trial to 50% off first month
+			hotjarEvent('checkout_upsell_accepted_trial_to_first_month');
 			setActivePromo('upsell');
 		} else if (!activePromo) {
 			// Downsell: accept 50% off when they were going to pay full price
+			hotjarEvent('checkout_upsell_accepted_regular_to_first_month');
 			setActivePromo('upsell');
 		}
 		// Trigger form submission again
@@ -390,6 +427,11 @@ const CheckoutForm: React.FC<{
 
 	const handleUpsellDecline = () => {
 		setShowUpsellModal(false);
+		if (activePromo === 'trial') {
+			hotjarEvent('checkout_upsell_declined_trial');
+		} else {
+			hotjarEvent('checkout_upsell_declined_regular');
+		}
 		// Continue with original selection
 		const form = document.querySelector(
 			'.checkout-form'
@@ -402,12 +444,14 @@ const CheckoutForm: React.FC<{
 	// Downsell modal handlers
 	const handleDownsellAccept = () => {
 		setShowDownsellModal(false);
+		hotjarEvent('checkout_downsell_accepted_trial_offer');
 		// Switch to trial offer
 		setActivePromo('trial');
 	};
 
 	const handleDownsellDecline = () => {
 		setShowDownsellModal(false);
+		hotjarEvent('checkout_downsell_declined');
 	};
 
 	return (

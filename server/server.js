@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const axios = require('axios'); // Add axios for Google Places API calls
+const emailService = require('./services/emailService'); // Add email service
 
 // Check if Stripe secret key is available
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -354,18 +355,45 @@ app.post('/api/auth/send-magic-link', async (req, res) => {
 			expires,
 		});
 
-		// In production, send this via email
-		// For now, we'll return it in the response (demo only!)
-		const magicLink = `http://localhost:3000/auth/verify?token=${token}`;
+		// Create magic link URL
+		const baseUrl =
+			process.env.NODE_ENV === 'production'
+				? 'https://positive-postcards.onrender.com'
+				: 'http://localhost:3000';
+		const magicLink = `${baseUrl}/auth/verify?token=${token}`;
 
-		console.log(`Magic link for ${email}: ${magicLink}`);
+		// Send email via Postmark
+		try {
+			const emailResult = await emailService.sendMagicLink(
+				email,
+				magicLink
+			);
 
-		res.json({
-			success: true,
-			message: 'Check your email for the login link',
-			// Remove this in production!
-			demoLink: magicLink,
-		});
+			if (emailResult.demo) {
+				// In demo mode, return the link for testing
+				res.json({
+					success: true,
+					message: 'Check your email for the login link',
+					demoLink: emailResult.link,
+				});
+			} else {
+				// In production, just confirm email was sent
+				res.json({
+					success: true,
+					message: 'Check your email for the login link',
+					messageId: emailResult.messageId,
+				});
+			}
+		} catch (emailError) {
+			console.error('Email sending failed:', emailError);
+			// Fallback to demo mode if email fails
+			res.json({
+				success: true,
+				message: 'Check your email for the login link',
+				demoLink: magicLink,
+				warning: 'Email service unavailable, showing demo link',
+			});
+		}
 	} catch (error) {
 		console.error('Error sending magic link:', error);
 		res.status(500).json({ error: 'Failed to send login link' });
@@ -546,7 +574,7 @@ app.post('/api/email-optin', async (req, res) => {
 		}
 
 		// In a real app, you would:
-		// 1. Add to your email marketing service (Mailchimp, SendGrid, etc.)
+		// 1. Add to your email marketing service (Mailchimp, Mailgun, etc.)
 		// 2. Store in database
 		// 3. Send welcome email
 
@@ -687,7 +715,25 @@ app.post(
 			case 'subscription.created':
 				const subscription = event.data.object;
 				console.log('Subscription created:', subscription.id);
-				// TODO: Send welcome email
+
+				// Send welcome email
+				try {
+					const customer = await stripe.customers.retrieve(
+						subscription.customer
+					);
+					const subscriptionDetails = {
+						plan: subscription.metadata?.billingCycle || 'Monthly',
+						billing:
+							subscription.metadata?.billingCycle || 'Monthly',
+					};
+
+					await emailService.sendWelcomeEmail(
+						customer.email,
+						subscriptionDetails
+					);
+				} catch (emailError) {
+					console.error('Error sending welcome email:', emailError);
+				}
 				break;
 
 			case 'subscription.updated':
@@ -698,7 +744,28 @@ app.post(
 			case 'subscription.deleted':
 				const deletedSubscription = event.data.object;
 				console.log('Subscription canceled:', deletedSubscription.id);
-				// TODO: Send cancellation confirmation
+
+				// Send cancellation confirmation
+				try {
+					const customer = await stripe.customers.retrieve(
+						deletedSubscription.customer
+					);
+					const subscriptionDetails = {
+						endsAt: new Date(
+							deletedSubscription.current_period_end * 1000
+						).toLocaleDateString(),
+					};
+
+					await emailService.sendSubscriptionCancellationEmail(
+						customer.email,
+						subscriptionDetails
+					);
+				} catch (emailError) {
+					console.error(
+						'Error sending cancellation email:',
+						emailError
+					);
+				}
 				break;
 
 			case 'invoice.payment_succeeded':
@@ -710,7 +777,27 @@ app.post(
 			case 'invoice.payment_failed':
 				const failedInvoice = event.data.object;
 				console.log('Invoice payment failed:', failedInvoice.id);
-				// TODO: Send payment failure notification
+
+				// Send payment failure notification
+				try {
+					const customer = await stripe.customers.retrieve(
+						failedInvoice.customer
+					);
+					const subscriptionDetails = {
+						amount: failedInvoice.amount_due / 100,
+						currency: failedInvoice.currency,
+					};
+
+					await emailService.sendPaymentFailedEmail(
+						customer.email,
+						subscriptionDetails
+					);
+				} catch (emailError) {
+					console.error(
+						'Error sending payment failed email:',
+						emailError
+					);
+				}
 				break;
 
 			default:
@@ -721,8 +808,54 @@ app.post(
 	}
 );
 
+// Add email test endpoint for development
+if (process.env.NODE_ENV !== 'production') {
+	app.post('/api/test-email', async (req, res) => {
+		try {
+			const { email, type = 'test' } = req.body;
+
+			if (!email) {
+				return res.status(400).json({ error: 'Email required' });
+			}
+
+			let result;
+			switch (type) {
+				case 'welcome':
+					result = await emailService.sendWelcomeEmail(email, {
+						plan: 'Monthly',
+						billing: 'Monthly',
+					});
+					break;
+				case 'cancellation':
+					result =
+						await emailService.sendSubscriptionCancellationEmail(
+							email,
+							{ endsAt: 'End of current period' }
+						);
+					break;
+				case 'payment-failed':
+					result = await emailService.sendPaymentFailedEmail(email, {
+						amount: 60,
+						currency: 'usd',
+					});
+					break;
+				default:
+					result = await emailService.sendTestEmail(email);
+			}
+
+			res.json({ success: true, result });
+		} catch (error) {
+			console.error('Test email error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+}
+
 // Catch-all handler: send back React's index.html file for any non-API routes
 if (process.env.NODE_ENV === 'production') {
+	// Serve static files from React build
+	app.use(express.static(path.join(__dirname, '../client/build')));
+
 	app.get('*', (req, res) => {
 		res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 	});
