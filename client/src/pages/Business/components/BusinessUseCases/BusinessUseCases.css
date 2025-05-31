@@ -1,0 +1,95 @@
+.business-use-cases {
+  padding: var(--spacing-4xl) 60px;
+  background: var(--white);
+}
+
+.use-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-2xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.use-case-card {
+  background: var(--bg-light-blue);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  transition: var(--transition-base);
+  border: 2px solid transparent;
+}
+
+.use-case-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-pink);
+}
+
+.use-case-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.use-case-icon {
+  font-size: 3rem;
+  background: var(--white);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.use-case-title h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--dark-blue);
+  margin-bottom: var(--spacing-xs);
+}
+
+.use-case-stat {
+  font-size: var(--text-sm);
+  color: var(--primary-pink);
+  font-weight: var(--font-semibold);
+  background: rgba(255, 107, 157, 0.1);
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.use-case-description {
+  font-size: var(--text-base);
+  color: var(--text-gray);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.6;
+}
+
+.use-case-benefits {
+  list-style: none;
+}
+
+.use-case-benefits li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  color: var(--dark-blue);
+  font-size: var(--text-sm);
+}
+
+.use-case-benefits li::before {
+  content: '✓';
+  color: var(--success-green);
+  font-weight: var(--font-bold);
+}
+
+@media (max-width: 768px) {
+  .use-cases-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+  }
+  
+  .use-case-card {
+    padding: var(--spacing-lg);
+  }
+} 

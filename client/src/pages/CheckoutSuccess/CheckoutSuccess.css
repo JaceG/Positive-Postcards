@@ -1,0 +1,149 @@
+.success-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  padding: 80px 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  padding: 3rem;
+  text-align: center;
+}
+
+.success-icon {
+  margin-bottom: 2rem;
+  animation: checkmark 0.6s ease;
+}
+
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.success-container h1 {
+  margin: 0 0 1.5rem 0;
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.success-message {
+  margin-bottom: 2rem;
+}
+
+.success-message p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.success-message strong {
+  color: #333;
+}
+
+.success-details {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.success-details h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.success-details ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.success-details li {
+  margin: 0.75rem 0;
+  font-size: 1rem;
+  color: #555;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.success-actions {
+  margin-bottom: 2rem;
+}
+
+.success-actions .btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: var(--primary-color, #ff6b9d);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+}
+
+.success-actions .btn:hover {
+  background: #ff5287;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 107, 157, 0.4);
+}
+
+.subscription-id {
+  margin: 1rem 0 0 0;
+  font-size: 0.875rem;
+  color: #999;
+}
+
+.success-footer {
+  border-top: 1px solid #eee;
+  padding-top: 1.5rem;
+}
+
+.success-footer p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.success-footer a {
+  color: var(--primary-color, #ff6b9d);
+  text-decoration: none;
+}
+
+.success-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .success-container {
+    padding: 2rem 1.5rem;
+  }
+
+  .success-container h1 {
+    font-size: 2rem;
+  }
+
+  .success-details {
+    padding: 1.5rem;
+  }
+} 

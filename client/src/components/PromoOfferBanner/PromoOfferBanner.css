@@ -1,0 +1,226 @@
+.promo-banner {
+  width: 100%;
+  padding: 2rem 0;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.promo-banner.trial-offer {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.promo-banner.upsell-offer {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.promo-banner.email-optin {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 2rem 0;
+}
+
+.promo-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+}
+
+.promo-banner.email-optin .promo-container {
+  justify-content: center;
+}
+
+.promo-badge {
+  position: absolute;
+  top: -10px;
+  left: 2rem;
+  background: #fee140;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.promo-content {
+  flex: 1;
+}
+
+.promo-headline {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0 0 1rem 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.promo-subtext {
+  font-size: 1.25rem;
+  margin: 0 0 1.5rem 0;
+  opacity: 0.95;
+}
+
+.promo-features {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.promo-features span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.promo-cta {
+  padding: 1rem 2.5rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.promo-cta.pulse-button {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+}
+
+.promo-cta.pulse-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(255, 255, 255, 0.4);
+}
+
+.promo-cta.upsell-button {
+  background: #fee140;
+  color: #333;
+  box-shadow: 0 4px 20px rgba(254, 225, 64, 0.4);
+}
+
+.promo-cta.upsell-button:hover {
+  background: #ffd700;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(254, 225, 64, 0.5);
+}
+
+.promo-timer {
+  display: flex;
+  align-items: center;
+}
+
+/* Upsell specific styles */
+.promo-comparison {
+  display: flex;
+  gap: 3rem;
+  margin: 1.5rem 0;
+  align-items: center;
+}
+
+.price-old, .price-new {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.price-old .label, .price-new .label {
+  font-size: 0.875rem;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+}
+
+.price-old .amount {
+  font-size: 1.5rem;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.price-new .amount {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fee140;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.promo-disclaimer {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.promo-banner {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .promo-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .promo-headline {
+    font-size: 1.5rem;
+  }
+
+  .promo-subtext {
+    font-size: 1rem;
+  }
+
+  .promo-features {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .promo-features span {
+    font-size: 0.875rem;
+  }
+
+  .promo-cta {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+  }
+
+  .promo-comparison {
+    gap: 2rem;
+  }
+
+  .promo-badge {
+    position: static;
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+}
+
+.promo-banner.email-optin .email-optin-form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: none;
+  background: white;
+  border: 1px solid #e0e0e0;
+} 

@@ -1,0 +1,113 @@
+.use-cases {
+  padding: var(--spacing-4xl) 60px;
+  background: var(--bg-light-blue);
+}
+
+.use-cases h2 {
+  text-align: center;
+  font-size: var(--text-3xl);
+  font-weight: var(--font-extrabold);
+  color: var(--dark-blue);
+  margin-bottom: var(--spacing-lg);
+}
+
+.section-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 60px;
+}
+
+.section-header p {
+  font-size: var(--text-lg);
+  color: var(--text-gray);
+}
+
+.use-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.use-case-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: var(--transition-base);
+  border: 3px solid transparent;
+}
+
+.use-case-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  border-color: var(--primary-pink);
+}
+
+.use-case-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.use-case-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--bg-light-pink), #FFD4E1);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-2xl);
+}
+
+.use-case-title h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--dark-blue);
+  margin-bottom: 4px;
+}
+
+.use-case-percentage {
+  font-size: var(--text-sm);
+  color: var(--primary-pink);
+  font-weight: var(--font-semibold);
+}
+
+.use-case-examples {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.use-case-examples li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-gray);
+  font-size: var(--text-sm);
+}
+
+.use-case-examples li::before {
+  content: '→';
+  color: var(--primary-pink);
+  font-weight: var(--font-bold);
+}
+
+@media (max-width: 768px) {
+  .use-cases {
+    padding: var(--spacing-3xl) 30px;
+  }
+  
+  .use-cases-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .use-case-card {
+    padding: var(--spacing-lg);
+  }
+}

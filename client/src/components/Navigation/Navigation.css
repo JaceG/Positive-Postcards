@@ -1,0 +1,247 @@
+/* Navigation */
+.navigation {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 20px 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  background: rgba(255, 251, 247, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.logo-mark {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #FF6B9D, #FEC860);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 24px;
+  color: white;
+  transform: rotate(-5deg);
+  transition: transform 0.3s;
+}
+
+.logo:hover .logo-mark {
+  transform: rotate(0deg);
+}
+
+.logo-text {
+  font-size: 28px;
+  font-weight: 800;
+  color: #2C3E50;
+  position: relative;
+}
+
+.logo-text span {
+  background: linear-gradient(135deg, #FF6B9D, #FEC860);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.business-indicator {
+  position: absolute;
+  bottom: -15px;
+  right: -35px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #FF6B9D;
+  background: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1.5px solid #FF6B9D;
+  white-space: nowrap;
+  animation: gentle-pulse 2s infinite;
+  transition: all 0.3s;
+}
+
+.business-indicator:hover {
+  transform: scale(1.05);
+  background: #FF6B9D;
+  color: white;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.nav-link,
+.nav-link-btn {
+  color: #5D6D7E;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+}
+
+.nav-link:hover,
+.nav-link-btn:hover {
+  color: #FF6B9D;
+}
+
+.nav-link.active-page {
+  color: #FF6B9D;
+  font-weight: 700;
+}
+
+.nav-link.active-page::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #FF6B9D;
+  border-radius: 50%;
+}
+
+.gift-nav-btn {
+  background: linear-gradient(135deg, #C06EFF, #FF6B9D);
+  color: white;
+  padding: 12px 28px;
+  border-radius: 25px;
+  text-decoration: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+  border: none;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.gift-nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+}
+
+.cart-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.cart-button:hover {
+  transform: scale(1.1);
+}
+
+.cart-button svg {
+  color: #5D6D7E;
+  transition: color 0.3s;
+}
+
+.cart-button:hover svg {
+  color: #FF6B9D;
+}
+
+.cart-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #FF6B9D;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .navigation {
+    padding: 20px 30px;
+  }
+  
+  .logo-text {
+    font-size: 24px;
+  }
+  
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .nav-links {
+    gap: 20px;
+  }
+
+  .nav-link,
+  .nav-link-btn {
+    font-size: 14px;
+  }
+
+  .gift-nav-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  /* Hide some links on mobile */
+  .nav-link-btn:not(.gift-nav-btn) {
+    display: none;
+  }
+
+  .nav-link:not(:last-child) {
+    display: none;
+  }
+
+  .business-indicator {
+    bottom: -6px;
+    right: -15px;
+    font-size: 10px;
+    padding: 1px 6px;
+  }
+}
+
+/* Business page navigation styling */
+.navigation.business-nav {
+  background: rgba(248, 250, 251, 0.98);
+  border-bottom: 2px solid rgba(30, 64, 175, 0.1);
+}
+
+.cta-button:hover {
+	transform: scale(1.05);
+}
+
+/* Hamburger Menu */

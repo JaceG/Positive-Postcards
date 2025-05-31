@@ -1,0 +1,234 @@
+.upsell-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.upsell-modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+}
+
+.upsell-content {
+  padding: 3rem;
+}
+
+.upsell-headline {
+  font-size: 2.5rem;
+  color: #333;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.offer-text {
+  font-size: 1.25rem;
+  color: #555;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.price-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.price-item {
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: #f8f9fa;
+}
+
+.price-item.featured {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.price-item .label {
+  display: block;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+}
+
+.price-item .price {
+  display: block;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.price-item .savings {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #fee140;
+}
+
+.arrow {
+  font-size: 2rem;
+  color: #999;
+}
+
+.benefits {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.benefits li {
+  padding: 0.75rem 0;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.price-breakdown {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin: 2rem 0;
+}
+
+.original-price,
+.special-price {
+  text-align: center;
+}
+
+.original-price span,
+.special-price span {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.amount {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.highlight {
+  color: #667eea;
+}
+
+.urgency {
+  text-align: center;
+  color: #f5576c;
+  font-weight: 600;
+  margin: 1.5rem 0;
+}
+
+.upsell-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.accept-button,
+.decline-button {
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.accept-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.accept-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.decline-button {
+  background: transparent;
+  color: #999;
+  border: 1px solid #ddd;
+}
+
+.decline-button:hover {
+  background: #f8f9fa;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .upsell-content {
+    padding: 2rem;
+  }
+
+  .upsell-headline {
+    font-size: 1.75rem;
+  }
+
+  .offer-text {
+    font-size: 1rem;
+  }
+
+  .price-comparison {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .arrow {
+    transform: rotate(90deg);
+  }
+
+  .price-item.featured {
+    transform: scale(1.05);
+  }
+
+  .benefits li {
+    font-size: 1rem;
+  }
+
+  .price-breakdown {
+    gap: 2rem;
+  }
+} 

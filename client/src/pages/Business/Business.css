@@ -1,0 +1,27 @@
+.business-page {
+  background-color: var(--bg-cream);
+  min-height: 100vh;
+}
+
+/* Business page specific overrides */
+.business-page .section-header h2 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-extrabold);
+  color: var(--dark-blue);
+  margin-bottom: var(--spacing-lg);
+}
+
+.business-page .section-header p {
+  font-size: var(--text-lg);
+  color: var(--text-gray);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Professional color palette additions for business */
+.business-page {
+  --business-blue: #1e40af;
+  --business-navy: #1e293b;
+  --business-gray: #64748b;
+  --business-light-gray: #f1f5f9;
+} 
