@@ -16,14 +16,47 @@ interface Subscription {
 	items: {
 		data: Array<{
 			price: {
+				id: string;
 				unit_amount: number;
 				currency: string;
 				recurring: {
 					interval: string;
+					interval_count?: number;
 				};
+				nickname?: string;
 			};
 		}>;
 	};
+}
+
+interface Plan {
+	id: string;
+	name: string;
+	price: number;
+	interval: string;
+	duration: number;
+	description: string;
+	popular: boolean;
+	savings?: string;
+	features: string[];
+	stripePriceId: string | null;
+	pricePerMonth?: number;
+}
+
+interface PlanChangePreview {
+	changeType: 'upgrade' | 'downgrade';
+	currentPrice: number;
+	newPrice: number;
+	priceDifference: number;
+	amountDueNow: number;
+	subtotal: number;
+	total: number;
+	nextBillingDate: string;
+	lineItems: Array<{
+		description: string;
+		amount: number;
+		proration: boolean;
+	}>;
 }
 
 const Dashboard: React.FC = () => {
@@ -36,6 +69,14 @@ const Dashboard: React.FC = () => {
 	const [selectedSubscription, setSelectedSubscription] = useState<
 		string | null
 	>(null);
+	
+	// Plan management state
+	const [availablePlans, setAvailablePlans] = useState<Plan[]>([]);
+	const [showPlanModal, setShowPlanModal] = useState(false);
+	const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+	const [planChangePreview, setPlanChangePreview] = useState<PlanChangePreview | null>(null);
+	const [changingPlan, setChangingPlan] = useState(false);
+	const [planError, setPlanError] = useState<string | null>(null);
 
 	const fetchDashboardData = useCallback(async () => {
 		try {
@@ -66,6 +107,26 @@ const Dashboard: React.FC = () => {
 		}
 	}, [sessionToken, navigate, logout]);
 
+	const fetchAvailablePlans = useCallback(async () => {
+		try {
+			const response = await fetch(
+				`${process.env.REACT_APP_API_URL}/api/subscription/plans`,
+				{
+					headers: {
+						Authorization: `Bearer ${sessionToken}`,
+					},
+				}
+			);
+
+			if (response.ok) {
+				const data = await response.json();
+				setAvailablePlans(data.plans || []);
+			}
+		} catch (error) {
+			console.error('Error fetching plans:', error);
+		}
+	}, [sessionToken]);
+
 	useEffect(() => {
 		if (!sessionToken) {
 			navigate('/login');
@@ -73,7 +134,8 @@ const Dashboard: React.FC = () => {
 		}
 
 		fetchDashboardData();
-	}, [sessionToken, navigate, logout, fetchDashboardData]);
+		fetchAvailablePlans();
+	}, [sessionToken, navigate, logout, fetchDashboardData, fetchAvailablePlans]);
 
 	const handleBillingPortal = async () => {
 		try {
@@ -148,6 +210,119 @@ const Dashboard: React.FC = () => {
 		} catch (error) {
 			console.error('Error resuming subscription:', error);
 		}
+	};
+
+	// Plan change functions
+	const handleOpenPlanModal = (subscription: Subscription) => {
+		setSelectedSubscription(subscription.id);
+		setShowPlanModal(true);
+		setPlanChangePreview(null);
+		setSelectedPlan(null);
+		setPlanError(null);
+	};
+
+	const handleSelectPlan = async (plan: Plan) => {
+		if (!selectedSubscription || !plan.stripePriceId) return;
+		
+		setSelectedPlan(plan);
+		setPlanError(null);
+		
+		try {
+			const response = await fetch(
+				`${process.env.REACT_APP_API_URL}/api/subscription/preview-change`,
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${sessionToken}`,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						subscriptionId: selectedSubscription,
+						newPriceId: plan.stripePriceId,
+					}),
+				}
+			);
+
+			if (response.ok) {
+				const data = await response.json();
+				setPlanChangePreview(data.preview);
+			} else {
+				const error = await response.json();
+				setPlanError(error.error || 'Failed to preview plan change');
+			}
+		} catch (error) {
+			console.error('Error previewing plan change:', error);
+			setPlanError('Failed to preview plan change');
+		}
+	};
+
+	const handleConfirmPlanChange = async () => {
+		if (!selectedSubscription || !selectedPlan?.stripePriceId) return;
+		
+		setChangingPlan(true);
+		setPlanError(null);
+		
+		try {
+			const response = await fetch(
+				`${process.env.REACT_APP_API_URL}/api/subscription/change-plan`,
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${sessionToken}`,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						subscriptionId: selectedSubscription,
+						newPriceId: selectedPlan.stripePriceId,
+					}),
+				}
+			);
+
+			if (response.ok) {
+				setShowPlanModal(false);
+				setSelectedPlan(null);
+				setPlanChangePreview(null);
+				fetchDashboardData();
+			} else {
+				const error = await response.json();
+				setPlanError(error.error || 'Failed to change plan');
+			}
+		} catch (error) {
+			console.error('Error changing plan:', error);
+			setPlanError('Failed to change plan');
+		} finally {
+			setChangingPlan(false);
+		}
+	};
+
+	const handleReactivateSubscription = async (subscriptionId: string) => {
+		try {
+			const response = await fetch(
+				`${process.env.REACT_APP_API_URL}/api/subscription/reactivate`,
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${sessionToken}`,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ subscriptionId }),
+				}
+			);
+
+			if (response.ok) {
+				fetchDashboardData();
+			}
+		} catch (error) {
+			console.error('Error reactivating subscription:', error);
+		}
+	};
+
+	const getCurrentPlanId = (subscription: Subscription): string => {
+		const price = subscription.items.data[0]?.price;
+		if (price?.nickname) return price.nickname;
+		if (price?.recurring?.interval === 'year') return 'annual';
+		if (price?.recurring?.interval_count === 3) return 'quarterly';
+		return 'monthly';
 	};
 
 	const formatDate = (timestamp: number) => {
@@ -260,7 +435,17 @@ const Dashboard: React.FC = () => {
 									</div>
 
 									<div className='subscription-actions'>
-										{subscription.pause_collection ? (
+										{subscription.cancel_at_period_end ? (
+											<button
+												onClick={() =>
+													handleReactivateSubscription(
+														subscription.id
+													)
+												}
+												className='action-button reactivate'>
+												Reactivate Subscription
+											</button>
+										) : subscription.pause_collection ? (
 											<button
 												onClick={() =>
 													handleResumeSubscription(
@@ -271,7 +456,14 @@ const Dashboard: React.FC = () => {
 												Resume Subscription
 											</button>
 										) : (
-											!subscription.cancel_at_period_end && (
+											<>
+												<button
+													onClick={() =>
+														handleOpenPlanModal(subscription)
+													}
+													className='action-button change-plan'>
+													Change Plan
+												</button>
 												<button
 													onClick={() => {
 														setSelectedSubscription(
@@ -282,7 +474,7 @@ const Dashboard: React.FC = () => {
 													className='action-button pause'>
 													Pause Subscription
 												</button>
-											)
+											</>
 										)}
 										<button
 											onClick={handleBillingPortal}
@@ -346,6 +538,132 @@ const Dashboard: React.FC = () => {
 							</button>
 							<button
 								onClick={() => setShowPauseModal(false)}
+								className='cancel-button'>
+								Cancel
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{/* Plan Change Modal */}
+			{showPlanModal && (
+				<div
+					className='modal-overlay'
+					onClick={() => setShowPlanModal(false)}>
+					<div
+						className='modal-content plan-modal'
+						onClick={(e) => e.stopPropagation()}>
+						<h3>Change Your Plan</h3>
+						<p>Select a new plan to upgrade or downgrade your subscription.</p>
+
+						{planError && (
+							<div className='plan-error'>
+								{planError}
+							</div>
+						)}
+
+						<div className='plans-grid'>
+							{availablePlans
+								.filter(plan => plan.id !== 'trial') // Don't show trial for existing subscribers
+								.map((plan) => {
+									const currentSubscription = subscriptions.find(
+										s => s.id === selectedSubscription
+									);
+									const currentPlanId = currentSubscription 
+										? getCurrentPlanId(currentSubscription)
+										: null;
+									const isCurrentPlan = plan.id === currentPlanId;
+									const isSelected = selectedPlan?.id === plan.id;
+
+									return (
+										<div
+											key={plan.id}
+											className={`plan-option ${isSelected ? 'selected' : ''} ${isCurrentPlan ? 'current' : ''} ${plan.popular ? 'popular' : ''}`}
+											onClick={() => !isCurrentPlan && plan.stripePriceId && handleSelectPlan(plan)}>
+											{plan.popular && (
+												<span className='popular-badge'>Best Value</span>
+											)}
+											{isCurrentPlan && (
+												<span className='current-badge'>Current Plan</span>
+											)}
+											<h4>{plan.name}</h4>
+											<div className='plan-price'>
+												<span className='amount'>${plan.price}</span>
+												<span className='interval'>/{plan.interval}</span>
+											</div>
+											{plan.pricePerMonth && (
+												<p className='price-per-month'>
+													${plan.pricePerMonth}/month
+												</p>
+											)}
+											{plan.savings && (
+												<span className='savings-badge'>Save {plan.savings}</span>
+											)}
+											<ul className='plan-features'>
+												{plan.features.map((feature, idx) => (
+													<li key={idx}>{feature}</li>
+												))}
+											</ul>
+											{!plan.stripePriceId && (
+												<p className='plan-unavailable'>Not available</p>
+											)}
+										</div>
+									);
+								})}
+						</div>
+
+						{/* Proration Preview */}
+						{planChangePreview && selectedPlan && (
+							<div className='proration-preview'>
+								<h4>
+									{planChangePreview.changeType === 'upgrade' ? '⬆️ Upgrade' : '⬇️ Downgrade'} Preview
+								</h4>
+								<div className='preview-details'>
+									<div className='preview-row'>
+										<span>Current plan:</span>
+										<span>${planChangePreview.currentPrice}/month</span>
+									</div>
+									<div className='preview-row'>
+										<span>New plan:</span>
+										<span>${planChangePreview.newPrice}/{selectedPlan.interval}</span>
+									</div>
+									<div className='preview-row highlight'>
+										<span>Amount due today:</span>
+										<span>${planChangePreview.amountDueNow.toFixed(2)}</span>
+									</div>
+									{planChangePreview.lineItems.length > 0 && (
+										<div className='line-items'>
+											<p>Proration details:</p>
+											{planChangePreview.lineItems.map((item, idx) => (
+												<div key={idx} className='line-item'>
+													<span>{item.description}</span>
+													<span>${item.amount.toFixed(2)}</span>
+												</div>
+											))}
+										</div>
+									)}
+								</div>
+							</div>
+						)}
+
+						<div className='modal-actions'>
+							<button
+								onClick={handleConfirmPlanChange}
+								disabled={!selectedPlan || changingPlan}
+								className='confirm-button'>
+								{changingPlan ? 'Processing...' : 
+									planChangePreview?.changeType === 'upgrade' 
+										? 'Confirm Upgrade' 
+										: 'Confirm Change'}
+							</button>
+							<button
+								onClick={() => {
+									setShowPlanModal(false);
+									setSelectedPlan(null);
+									setPlanChangePreview(null);
+									setPlanError(null);
+								}}
 								className='cancel-button'>
 								Cancel
 							</button>

@@ -565,6 +565,317 @@ app.post('/api/subscription/resume', requireAuth, async (req, res) => {
 	}
 });
 
+// ============================================
+// SUBSCRIPTION MANAGEMENT - UPGRADE/DOWNGRADE
+// ============================================
+
+// Get available subscription plans for upgrade/downgrade
+app.get('/api/subscription/plans', requireAuth, async (req, res) => {
+	try {
+		// Define available plans with pricing
+		const plans = [
+			{
+				id: 'trial',
+				name: '7-Day Trial',
+				price: 7,
+				interval: 'one-time',
+				duration: 7,
+				description: 'Try it for 7 days',
+				popular: false,
+				features: ['7 daily postcards', 'Cancel anytime'],
+			},
+			{
+				id: 'monthly',
+				name: 'Monthly',
+				price: 60,
+				interval: 'month',
+				duration: 30,
+				description: '$60/month',
+				popular: false,
+				features: ['30 daily postcards', 'Cancel anytime', 'Pause subscription'],
+			},
+			{
+				id: 'quarterly',
+				name: 'Quarterly',
+				price: 99,
+				interval: 'quarter',
+				duration: 90,
+				pricePerMonth: 33,
+				description: '$99/quarter (Save 45%)',
+				popular: true,
+				savings: '45%',
+				features: ['90 daily postcards', 'Best value', 'Cancel anytime', 'Pause subscription'],
+			},
+			{
+				id: 'annual',
+				name: 'Annual',
+				price: 360,
+				interval: 'year',
+				duration: 365,
+				pricePerMonth: 30,
+				description: '$360/year (Save 50%)',
+				popular: false,
+				savings: '50%',
+				features: ['365 daily postcards', 'Maximum savings', 'Cancel anytime', 'Pause subscription'],
+			},
+		];
+
+		// Get Stripe prices to include price IDs
+		const existingPrices = await stripe.prices.list({
+			active: true,
+			limit: 100,
+		});
+
+		// Map plans to include Stripe price IDs
+		const plansWithPriceIds = plans.map(plan => {
+			const stripePrice = existingPrices.data.find(p => 
+				p.nickname === plan.id || 
+				(p.unit_amount === plan.price * 100 && p.recurring?.interval === (plan.interval === 'quarter' ? 'month' : plan.interval))
+			);
+			return {
+				...plan,
+				stripePriceId: stripePrice?.id || null,
+			};
+		});
+
+		res.json({ plans: plansWithPriceIds });
+	} catch (error) {
+		console.error('Error fetching subscription plans:', error);
+		res.status(500).json({ error: 'Failed to fetch plans' });
+	}
+});
+
+// Get current subscription details
+app.get('/api/subscription/current', requireAuth, async (req, res) => {
+	try {
+		const { customerId } = req.user;
+
+		// Get customer with subscriptions
+		const customer = await stripe.customers.retrieve(customerId, {
+			expand: ['subscriptions'],
+		});
+
+		const activeSubscription = customer.subscriptions?.data?.find(
+			sub => sub.status === 'active' || sub.status === 'trialing'
+		);
+
+		if (!activeSubscription) {
+			return res.json({ subscription: null, message: 'No active subscription' });
+		}
+
+		// Get price details
+		const price = activeSubscription.items.data[0]?.price;
+		
+		// Determine current plan type
+		let currentPlan = 'monthly';
+		if (price?.nickname) {
+			currentPlan = price.nickname;
+		} else if (price?.recurring?.interval === 'year') {
+			currentPlan = 'annual';
+		} else if (price?.recurring?.interval_count === 3) {
+			currentPlan = 'quarterly';
+		}
+
+		res.json({
+			subscription: {
+				id: activeSubscription.id,
+				status: activeSubscription.status,
+				currentPlan,
+				currentPeriodStart: new Date(activeSubscription.current_period_start * 1000),
+				currentPeriodEnd: new Date(activeSubscription.current_period_end * 1000),
+				cancelAtPeriodEnd: activeSubscription.cancel_at_period_end,
+				price: {
+					id: price?.id,
+					amount: price?.unit_amount / 100,
+					interval: price?.recurring?.interval,
+					intervalCount: price?.recurring?.interval_count || 1,
+				},
+				metadata: activeSubscription.metadata,
+			},
+		});
+	} catch (error) {
+		console.error('Error fetching current subscription:', error);
+		res.status(500).json({ error: 'Failed to fetch subscription' });
+	}
+});
+
+// Upgrade or downgrade subscription
+app.post('/api/subscription/change-plan', requireAuth, async (req, res) => {
+	try {
+		const { subscriptionId, newPriceId, prorationBehavior = 'create_prorations' } = req.body;
+
+		if (!subscriptionId || !newPriceId) {
+			return res.status(400).json({ error: 'Subscription ID and new price ID are required' });
+		}
+
+		// Verify subscription belongs to user
+		const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+		if (subscription.customer !== req.user.customerId) {
+			return res.status(403).json({ error: 'Unauthorized' });
+		}
+
+		// Get current subscription item
+		const currentItem = subscription.items.data[0];
+		if (!currentItem) {
+			return res.status(400).json({ error: 'No subscription item found' });
+		}
+
+		// Get old and new price details for comparison
+		const oldPrice = await stripe.prices.retrieve(currentItem.price.id);
+		const newPrice = await stripe.prices.retrieve(newPriceId);
+
+		const isUpgrade = newPrice.unit_amount > oldPrice.unit_amount;
+		const changeType = isUpgrade ? 'upgrade' : 'downgrade';
+
+		console.log(`📊 Processing subscription ${changeType}:`, {
+			subscriptionId,
+			oldPrice: oldPrice.unit_amount / 100,
+			newPrice: newPrice.unit_amount / 100,
+			prorationBehavior,
+		});
+
+		// Update the subscription with the new price
+		const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+			items: [{
+				id: currentItem.id,
+				price: newPriceId,
+			}],
+			proration_behavior: prorationBehavior,
+			metadata: {
+				...subscription.metadata,
+				last_plan_change: new Date().toISOString(),
+				plan_change_type: changeType,
+				previous_price_id: currentItem.price.id,
+			},
+		});
+
+		// Calculate proration details if applicable
+		let prorationDetails = null;
+		if (prorationBehavior === 'create_prorations') {
+			const upcomingInvoice = await stripe.invoices.retrieveUpcoming({
+				customer: req.user.customerId,
+				subscription: subscriptionId,
+			});
+			
+			prorationDetails = {
+				amountDue: upcomingInvoice.amount_due / 100,
+				subtotal: upcomingInvoice.subtotal / 100,
+				total: upcomingInvoice.total / 100,
+			};
+		}
+
+		res.json({
+			success: true,
+			changeType,
+			subscription: {
+				id: updatedSubscription.id,
+				status: updatedSubscription.status,
+				newPrice: newPrice.unit_amount / 100,
+				oldPrice: oldPrice.unit_amount / 100,
+				currentPeriodEnd: new Date(updatedSubscription.current_period_end * 1000),
+			},
+			proration: prorationDetails,
+			message: `Successfully ${changeType}d your subscription`,
+		});
+	} catch (error) {
+		console.error('Error changing subscription plan:', error);
+		res.status(500).json({ error: error.message || 'Failed to change plan' });
+	}
+});
+
+// Preview proration for plan change
+app.post('/api/subscription/preview-change', requireAuth, async (req, res) => {
+	try {
+		const { subscriptionId, newPriceId } = req.body;
+
+		if (!subscriptionId || !newPriceId) {
+			return res.status(400).json({ error: 'Subscription ID and new price ID are required' });
+		}
+
+		// Verify subscription belongs to user
+		const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+		if (subscription.customer !== req.user.customerId) {
+			return res.status(403).json({ error: 'Unauthorized' });
+		}
+
+		const currentItem = subscription.items.data[0];
+
+		// Get price details
+		const oldPrice = await stripe.prices.retrieve(currentItem.price.id);
+		const newPrice = await stripe.prices.retrieve(newPriceId);
+
+		// Preview the upcoming invoice with the change
+		const previewInvoice = await stripe.invoices.retrieveUpcoming({
+			customer: req.user.customerId,
+			subscription: subscriptionId,
+			subscription_items: [{
+				id: currentItem.id,
+				price: newPriceId,
+			}],
+			subscription_proration_behavior: 'create_prorations',
+		});
+
+		const isUpgrade = newPrice.unit_amount > oldPrice.unit_amount;
+
+		res.json({
+			preview: {
+				changeType: isUpgrade ? 'upgrade' : 'downgrade',
+				currentPrice: oldPrice.unit_amount / 100,
+				newPrice: newPrice.unit_amount / 100,
+				priceDifference: (newPrice.unit_amount - oldPrice.unit_amount) / 100,
+				amountDueNow: previewInvoice.amount_due / 100,
+				subtotal: previewInvoice.subtotal / 100,
+				total: previewInvoice.total / 100,
+				prorationDate: new Date(),
+				nextBillingDate: new Date(subscription.current_period_end * 1000),
+				lineItems: previewInvoice.lines.data.map(item => ({
+					description: item.description,
+					amount: item.amount / 100,
+					proration: item.proration,
+				})),
+			},
+		});
+	} catch (error) {
+		console.error('Error previewing subscription change:', error);
+		res.status(500).json({ error: error.message || 'Failed to preview change' });
+	}
+});
+
+// Reactivate a cancelled subscription (before period end)
+app.post('/api/subscription/reactivate', requireAuth, async (req, res) => {
+	try {
+		const { subscriptionId } = req.body;
+
+		// Verify subscription belongs to user
+		const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+		if (subscription.customer !== req.user.customerId) {
+			return res.status(403).json({ error: 'Unauthorized' });
+		}
+
+		if (!subscription.cancel_at_period_end) {
+			return res.status(400).json({ error: 'Subscription is not scheduled for cancellation' });
+		}
+
+		// Remove the cancellation
+		const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+			cancel_at_period_end: false,
+			metadata: {
+				...subscription.metadata,
+				reactivated_at: new Date().toISOString(),
+			},
+		});
+
+		res.json({
+			success: true,
+			subscription: updatedSubscription,
+			message: 'Subscription reactivated successfully',
+		});
+	} catch (error) {
+		console.error('Error reactivating subscription:', error);
+		res.status(500).json({ error: 'Failed to reactivate subscription' });
+	}
+});
+
 // Email opt-in endpoint
 app.post('/api/email-optin', async (req, res) => {
 	try {
@@ -815,7 +1126,53 @@ app.post(
 			case 'invoice.payment_succeeded':
 				const invoice = event.data.object;
 				console.log('Invoice payment succeeded:', invoice.id);
-				// TODO: Send receipt
+
+				// Handle subscription renewals (trigger next batch of postcards)
+				if (invoice.subscription && invoice.billing_reason !== 'subscription_create') {
+					try {
+						// Get subscription and customer details
+						const renewalSubscription = await stripe.subscriptions.retrieve(
+							invoice.subscription
+						);
+						const renewalCustomer = await stripe.customers.retrieve(
+							invoice.customer
+						);
+
+						console.log('📬 Processing subscription renewal for PCM...');
+						const pcmRenewalResult = await postcardManiaService.handleSubscriptionRenewal(
+							invoice,
+							renewalSubscription,
+							renewalCustomer
+						);
+
+						if (pcmRenewalResult && pcmRenewalResult.success !== false && !pcmRenewalResult.skipped) {
+							console.log('✅ Renewal postcard campaign triggered:', {
+								subscriptionId: renewalSubscription.id,
+								ordersPlaced: pcmRenewalResult.totalOrdered || 0,
+							});
+
+							// Update subscription metadata with new PCM tracking info
+							if (pcmRenewalResult.metadata) {
+								const existingOrderIds = renewalSubscription.metadata?.pcm_order_ids 
+									? JSON.parse(renewalSubscription.metadata.pcm_order_ids) 
+									: [];
+								const newOrderIds = pcmRenewalResult.successful?.map(o => o.orderId).filter(Boolean) || [];
+								const allOrderIds = [...existingOrderIds, ...newOrderIds];
+
+								await stripe.subscriptions.update(renewalSubscription.id, {
+									metadata: {
+										...renewalSubscription.metadata,
+										...pcmRenewalResult.metadata,
+										pcm_order_ids: JSON.stringify(allOrderIds.slice(-100)), // Keep last 100 orders
+										pcm_total_orders_placed: (parseInt(renewalSubscription.metadata?.pcm_total_orders_placed || '0', 10) + (pcmRenewalResult.totalOrdered || 0)).toString(),
+									},
+								});
+							}
+						}
+					} catch (renewalError) {
+						console.error('Error processing subscription renewal for PCM:', renewalError);
+					}
+				}
 				break;
 
 			case 'invoice.payment_failed':

@@ -610,6 +610,12 @@ class PostcardManiaService {
 	/**
 	 * Handle new subscription - trigger postcard campaign
 	 * Called from Stripe webhook: subscription.created
+	 * 
+	 * Stores metadata for continuation on renewal:
+	 * - pcm_start_day: The day of year when subscription started
+	 * - pcm_last_day: The last day of year processed (for continuation)
+	 * - pcm_order_ids: JSON array of PCM order IDs
+	 * - pcm_orders_placed: Total orders placed
 	 */
 	async handleNewSubscription(stripeSubscription, stripeCustomer) {
 		console.log(
@@ -636,6 +642,9 @@ class PostcardManiaService {
 
 		// Calculate starting day of year
 		const startDay = this.getDayOfYear(new Date());
+		
+		// Calculate the last day that will be processed
+		const lastDay = ((startDay - 1 + duration - 1) % 365) + 1;
 
 		// Verify address before placing orders
 		const verification = await this.verifyRecipient(recipientInfo);
@@ -657,11 +666,19 @@ class PostcardManiaService {
 				stripeSubscription.id
 			);
 
-			// Store order IDs in subscription metadata for tracking/cancellation
-			// Note: This would typically update Stripe subscription metadata
+			// Add metadata for tracking and renewal continuation
+			results.metadata = {
+				pcm_start_day: startDay.toString(),
+				pcm_last_day: lastDay.toString(),
+				pcm_campaign_start: new Date().toISOString(),
+				pcm_duration: duration.toString(),
+			};
+
 			console.log(`✅ Subscription ${stripeSubscription.id} processed:`, {
 				ordersPlaced: results.totalOrdered,
 				ordersFailed: results.failed.length,
+				startDay,
+				lastDay,
 			});
 
 			// Notify admin of any failures
@@ -686,29 +703,105 @@ class PostcardManiaService {
 	/**
 	 * Handle subscription renewal - trigger next billing period postcards
 	 * Called from Stripe webhook: invoice.payment_succeeded
+	 * 
+	 * Continues from where the previous billing period left off in the calendar.
+	 * Uses pcm_last_day from subscription metadata to determine starting point.
 	 */
-	async handleSubscriptionRenewal(invoice, stripeCustomer) {
+	async handleSubscriptionRenewal(invoice, stripeSubscription, stripeCustomer) {
 		// Only process subscription invoices (not one-time payments)
 		if (!invoice.subscription) {
 			return null;
+		}
+
+		// Skip if this is the first invoice (handled by subscription.created)
+		if (invoice.billing_reason === 'subscription_create') {
+			console.log('📬 Skipping renewal - this is the initial subscription invoice');
+			return { success: true, skipped: true, reason: 'initial_invoice' };
 		}
 
 		console.log(
 			`\n📬 Processing subscription renewal: ${invoice.subscription}`
 		);
 
-		// Similar to handleNewSubscription but for renewal period
-		// This would fetch the subscription and place the next batch of orders
+		// Extract shipping address
+		const recipientInfo = this.extractRecipientInfo(
+			stripeSubscription,
+			stripeCustomer
+		);
 
-		// TODO: Implement renewal logic
-		// - Get subscription details
-		// - Calculate next start day (continuing where previous batch ended)
-		// - Place orders for next billing period
+		if (!recipientInfo) {
+			console.error('❌ No shipping address found for renewal');
+			await this.notifyAdmin('Missing shipping address on renewal', {
+				subscriptionId: stripeSubscription.id,
+				invoiceId: invoice.id,
+			});
+			return { success: false, error: 'No shipping address' };
+		}
 
-		return {
-			success: true,
-			message: 'Renewal processing not yet implemented',
-		};
+		// Determine subscription duration based on billing cycle
+		const duration = this.getDurationFromSubscription(stripeSubscription);
+
+		// Get the last processed day from metadata (continue where we left off)
+		const lastProcessedDay = parseInt(stripeSubscription.metadata?.pcm_last_day, 10);
+		
+		// Calculate starting day: day after the last processed day (wraps around)
+		let startDay;
+		if (lastProcessedDay && !isNaN(lastProcessedDay)) {
+			// Continue from where we left off
+			startDay = (lastProcessedDay % 365) + 1;
+			console.log(`📅 Continuing from day ${startDay} (last processed: ${lastProcessedDay})`);
+		} else {
+			// Fallback to current day if no metadata
+			startDay = this.getDayOfYear(new Date());
+			console.log(`📅 No previous day found, starting from current day: ${startDay}`);
+		}
+
+		// Calculate the new last day
+		const newLastDay = ((startDay - 1 + duration - 1) % 365) + 1;
+
+		// Place postcard orders for the renewal period
+		try {
+			const results = await this.placeSubscriptionOrders(
+				recipientInfo,
+				startDay,
+				duration,
+				stripeSubscription.id
+			);
+
+			// Add metadata for tracking the new period
+			results.metadata = {
+				pcm_last_day: newLastDay.toString(),
+				pcm_renewal_date: new Date().toISOString(),
+				pcm_renewal_start_day: startDay.toString(),
+			};
+
+			console.log(`✅ Subscription renewal ${stripeSubscription.id} processed:`, {
+				ordersPlaced: results.totalOrdered,
+				ordersFailed: results.failed.length,
+				startDay,
+				newLastDay,
+				continuedFrom: lastProcessedDay || 'none',
+			});
+
+			// Notify admin of any failures
+			if (results.failed.length > 0) {
+				await this.notifyAdmin('Some renewal postcard orders failed', {
+					subscriptionId: stripeSubscription.id,
+					invoiceId: invoice.id,
+					failures: results.failed,
+				});
+			}
+
+			return results;
+		} catch (error) {
+			console.error('❌ Failed to process subscription renewal:', error);
+			await this.notifyAdmin('Subscription renewal processing failed', {
+				subscriptionId: stripeSubscription.id,
+				invoiceId: invoice.id,
+				error: error.message,
+			});
+			return { success: false, error: error.message };
+		}
 	}
 
 	/**
