@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const axios = require('axios'); // Add axios for Google Places API calls
 const emailService = require('./services/emailService'); // Add email service
+const postcardManiaService = require('./services/postcardManiaService'); // Add PCM service
 
 // Check if Stripe secret key is available
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -716,7 +717,7 @@ app.post(
 				const subscription = event.data.object;
 				console.log('Subscription created:', subscription.id);
 
-				// Send welcome email
+				// Send welcome email and trigger postcard campaign
 				try {
 					const customer = await stripe.customers.retrieve(
 						subscription.customer
@@ -727,12 +728,44 @@ app.post(
 							subscription.metadata?.billingCycle || 'Monthly',
 					};
 
+					// Send welcome email
 					await emailService.sendWelcomeEmail(
 						customer.email,
 						subscriptionDetails
 					);
-				} catch (emailError) {
-					console.error('Error sending welcome email:', emailError);
+
+					// Trigger Postcard Mania campaign
+					console.log('📬 Triggering postcard campaign for subscription:', subscription.id);
+					const pcmResult = await postcardManiaService.handleNewSubscription(
+						subscription,
+						customer
+					);
+					
+					if (pcmResult.success !== false) {
+						console.log('✅ Postcard campaign triggered:', {
+							subscriptionId: subscription.id,
+							ordersPlaced: pcmResult.totalOrdered || 0
+						});
+						
+						// Store PCM order IDs in subscription metadata for tracking
+						if (pcmResult.successful && pcmResult.successful.length > 0) {
+							const orderIds = pcmResult.successful.map(o => o.orderId).filter(Boolean);
+							if (orderIds.length > 0) {
+								await stripe.subscriptions.update(subscription.id, {
+									metadata: {
+										...subscription.metadata,
+										pcm_order_ids: JSON.stringify(orderIds),
+										pcm_orders_placed: orderIds.length.toString(),
+										pcm_campaign_start: new Date().toISOString()
+									}
+								});
+							}
+						}
+					} else {
+						console.error('❌ Failed to trigger postcard campaign:', pcmResult.error);
+					}
+				} catch (error) {
+					console.error('Error processing subscription.created:', error);
 				}
 				break;
 
@@ -745,7 +778,7 @@ app.post(
 				const deletedSubscription = event.data.object;
 				console.log('Subscription canceled:', deletedSubscription.id);
 
-				// Send cancellation confirmation
+				// Send cancellation confirmation and cancel pending postcards
 				try {
 					const customer = await stripe.customers.retrieve(
 						deletedSubscription.customer
@@ -756,15 +789,26 @@ app.post(
 						).toLocaleDateString(),
 					};
 
+					// Send cancellation email
 					await emailService.sendSubscriptionCancellationEmail(
 						customer.email,
 						subscriptionDetails
 					);
-				} catch (emailError) {
-					console.error(
-						'Error sending cancellation email:',
-						emailError
+
+					// Cancel pending Postcard Mania orders
+					console.log('📬 Canceling postcard orders for subscription:', deletedSubscription.id);
+					const pcmResult = await postcardManiaService.handleSubscriptionCancellation(
+						deletedSubscription
 					);
+					
+					if (pcmResult.cancelled && pcmResult.cancelled.length > 0) {
+						console.log('✅ Cancelled PCM orders:', pcmResult.cancelled.length);
+					}
+					if (pcmResult.failed && pcmResult.failed.length > 0) {
+						console.warn('⚠️  Failed to cancel some orders:', pcmResult.failed.length);
+					}
+				} catch (error) {
+					console.error('Error processing subscription.deleted:', error);
 				}
 				break;
 
@@ -846,6 +890,162 @@ if (process.env.NODE_ENV !== 'production') {
 			res.json({ success: true, result });
 		} catch (error) {
 			console.error('Test email error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+
+	// ============================================
+	// Postcard Mania Test Endpoints (Development Only)
+	// ============================================
+
+	// Test PCM connection and authentication
+	app.get('/api/pcm/test', async (req, res) => {
+		try {
+			const result = await postcardManiaService.testConnection();
+			res.json(result);
+		} catch (error) {
+			console.error('PCM test error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+
+	// Get all designs from PCM
+	app.get('/api/pcm/designs', async (req, res) => {
+		try {
+			const designs = await postcardManiaService.getAllDesigns(true);
+			res.json({ 
+				count: designs.length, 
+				designs: designs.map(d => ({
+					id: d.id || d.designId,
+					name: d.name || d.designName,
+					type: d.type
+				}))
+			});
+		} catch (error) {
+			console.error('PCM designs error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+
+	// Test placing a postcard order (uses demo mode if not configured)
+	app.post('/api/pcm/test-order', async (req, res) => {
+		try {
+			const { 
+				firstName = 'Test',
+				lastName = 'User',
+				address = '123 Test St',
+				city = 'Clearwater',
+				state = 'FL',
+				zipCode = '33765',
+				designId = 1
+			} = req.body;
+
+			const result = await postcardManiaService.placePostcardOrder(
+				{ firstName, lastName, address, city, state, zipCode },
+				designId,
+				{ 
+					mailDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+					variables: { dayNumber: 1 }
+				}
+			);
+
+			res.json(result);
+		} catch (error) {
+			console.error('PCM test order error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+
+	// Verify an address
+	app.post('/api/pcm/verify-address', async (req, res) => {
+		try {
+			const { firstName, lastName, address, address2, city, state, zipCode } = req.body;
+			
+			const result = await postcardManiaService.verifyRecipient({
+				firstName, lastName, address, address2, city, state, zipCode
+			});
+
+			res.json(result);
+		} catch (error) {
+			console.error('PCM address verify error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+
+	// Get retry queue status
+	app.get('/api/pcm/retry-queue', async (req, res) => {
+		try {
+			const status = postcardManiaService.getRetryQueueStatus();
+			res.json(status);
+		} catch (error) {
+			console.error('PCM retry queue error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+
+	// Process retry queue manually
+	app.post('/api/pcm/process-retry-queue', async (req, res) => {
+		try {
+			await postcardManiaService.processRetryQueue();
+			const status = postcardManiaService.getRetryQueueStatus();
+			res.json({ message: 'Retry queue processed', status });
+		} catch (error) {
+			console.error('PCM retry queue process error:', error);
+			res.status(500).json({ error: error.message });
+		}
+	});
+
+	// Simulate a full subscription campaign (for testing)
+	app.post('/api/pcm/simulate-subscription', async (req, res) => {
+		try {
+			const {
+				email = 'test@example.com',
+				firstName = 'Test',
+				lastName = 'User',
+				address = '123 Test St',
+				city = 'Clearwater',
+				state = 'FL',
+				zipCode = '33765',
+				duration = 7 // Default to trial (7 days)
+			} = req.body;
+
+			// Create mock subscription and customer objects
+			const mockSubscription = {
+				id: `test_sub_${Date.now()}`,
+				metadata: {
+					billingCycle: duration === 7 ? 'trial' : duration === 30 ? 'monthly' : 'quarterly',
+					recipientInfo: JSON.stringify({
+						firstName, lastName, address, city, state, zipCode
+					})
+				}
+			};
+
+			const mockCustomer = {
+				id: `test_cus_${Date.now()}`,
+				email,
+				shipping: {
+					name: `${firstName} ${lastName}`,
+					address: {
+						line1: address,
+						city, state,
+						postal_code: zipCode
+					}
+				}
+			};
+
+			const result = await postcardManiaService.handleNewSubscription(
+				mockSubscription,
+				mockCustomer
+			);
+
+			res.json({
+				message: 'Simulation complete',
+				subscriptionId: mockSubscription.id,
+				duration,
+				result
+			});
+		} catch (error) {
+			console.error('PCM simulation error:', error);
 			res.status(500).json({ error: error.message });
 		}
 	});

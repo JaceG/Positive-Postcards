@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Endpoints for PCM (Post Card Mania)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .page {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .page-number {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            padding: 5px 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .page-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+        .page-text {
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            background: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>API Endpoints for PCM (Post Card Mania)</h1>
+
+    <div class="page">
+        <div class="page-number">Page 1 of 33</div>
+
+        <div class="page-text">API Endpoints for PCM (Post 
+Card Mania) 
+https://docs.pcmintegrations.com/docs/directmail-api/24b58db675dad-place-postcard-order 
+ 
+</div>
+
+        <img class="page-image" src="images/page_1_img_1.png" alt="Page 1 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 2 of 33</div>
+
+        <div class="page-text"> 
+ 
+curl --request POST \ 
+  --url https://v3.pcmintegrations.com/order/postcard \ 
+  --header 'Accept: application/json' \ 
+  --header 'Authorization: Bearer 123' \ 
+  --header 'Content-Type: application/json' \ 
+  --data '{ 
+  "mailClass": "FirstClass", 
+  "recipients": [ 
+    { 
+      "company": "PCM Integrations", 
+      "firstName": "Alex", 
+      "lastName": "Doe", 
+      "address": "2145 Sunnydale Blvd", 
+      "address2": "Bldg. 102", 
+      "city": "Clearwater", 
+      "state": "FL", 
+      "zipCode": "33765", 
+      "extRefNbr": "string", 
+      "variables": [ 
+        { 
+          "key": "string", 
+          "value": "string" 
+        } 
+      ] 
+    } 
+  ], 
+  "size": "46", 
+</div>
+
+        <img class="page-image" src="images/page_2_img_1.png" alt="Page 2 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 3 of 33</div>
+
+        <div class="page-text">  "addons": null, 
+  "designID": 0, 
+  "front": "Raw HTML", 
+  "back": "Raw HTML", 
+  "addressing": { 
+    "font": "Bradley Hand", 
+    "fontColor": "Black", 
+    "exceptionalAddressingType": "resident" 
+  }, 
+  "extRefNbr": "string", 
+  "mailDate": "YYYY-MM-DD", 
+  "returnAddress": { 
+    "company": "PCM Integrations", 
+    "firstName": "Alex", 
+    "lastName": "Doe", 
+    "address": "2145 Sunnydale Blvd", 
+    "address2": "Bldg. 102", 
+    "city": "Clearwater", 
+    "state": "FL", 
+    "zipCode": "33765" 
+  }, 
+  "globalDesignVariables": [ 
+    { 
+      "key": "string", 
+      "value": "string" 
+    } 
+  ], 
+  "qrCodeID": 0, 
+  "qrCodeConfig": { 
+    "url": "string", 
+    "dotOptions": { 
+      "type": "square", 
+      "color": "#000", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    }, 
+    "cornerBorderOptions": { 
+      "type": "square", 
+      "color": "#FFF", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+</div>
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 4 of 33</div>
+
+        <div class="page-text">          } 
+        ] 
+      } 
+    }, 
+    "cornerDotOptions": { 
+      "type": "square", 
+      "color": "#FFF", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    } 
+  } 
+}' 
+ 
+</div>
+
+        <img class="page-image" src="images/page_4_img_1.png" alt="Page 4 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 5 of 33</div>
+
+        <img class="page-image" src="images/page_5_img_1.png" alt="Page 5 Image 1">
+
+        <img class="page-image" src="images/page_5_img_2.png" alt="Page 5 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 6 of 33</div>
+
+        <div class="page-text"> 
+ 
+ 
+https://docs.pcmintegrations.com/docs/directmail-api/24b58db675dad-place-postcard-order 
+</div>
+
+        <img class="page-image" src="images/page_6_img_1.png" alt="Page 6 Image 1">
+
+        <img class="page-image" src="images/page_6_img_2.png" alt="Page 6 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 7 of 33</div>
+
+        <div class="page-text"> 
+{ 
+  "mailClass": "FirstClass", 
+  "recipients": [ 
+    { 
+      "company": "PCM Integrations", 
+      "firstName": "Alex", 
+      "lastName": "Doe", 
+      "address": "2145 Sunnydale Blvd", 
+      "address2": "Bldg. 102", 
+      "city": "Clearwater", 
+      "state": "FL", 
+      "zipCode": "33765", 
+      "extRefNbr": "string", 
+      "variables": [ 
+        { 
+          "key": "string", 
+          "value": "string" 
+        } 
+      ] 
+    } 
+  ], 
+  "size": "46", 
+  "addons": null, 
+  "designID": 0, 
+  "front": "Raw HTML", 
+  "back": "Raw HTML", 
+  "addressing": { 
+    "font": "Bradley Hand", 
+    "fontColor": "Black", 
+    "exceptionalAddressingType": "resident" 
+  }, 
+  "extRefNbr": "string", 
+  "mailDate": "YYYY-MM-DD", 
+  "returnAddress": { 
+    "company": "PCM Integrations", 
+    "firstName": "Alex", 
+    "lastName": "Doe", 
+    "address": "2145 Sunnydale Blvd", 
+    "address2": "Bldg. 102", 
+    "city": "Clearwater", 
+    "state": "FL", 
+    "zipCode": "33765" 
+  }, 
+  "globalDesignVariables": [ 
+    { 
+      "key": "string", 
+      "value": "string" 
+    } 
+  ], 
+  "qrCodeID": 0, 
+  "qrCodeConfig": { 
+    "url": "string", 
+    "dotOptions": { 
+</div>
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 8 of 33</div>
+
+        <div class="page-text">      "type": "square", 
+      "color": "#000", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    }, 
+    "cornerBorderOptions": { 
+      "type": "square", 
+      "color": "#FFF", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    }, 
+    "cornerDotOptions": { 
+      "type": "square", 
+      "color": "#FFF", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    } 
+  } 
+} 
+ 
+—— 
+ 
+curl --request POST \ 
+  --url https://v3.pcmintegrations.com/order/postcard \ 
+  --header 'Accept: application/json' \ 
+  --header 'Authorization: Bearer 123' \ 
+  --header 'Content-Type: application/json' \ 
+  --data '{ 
+  "mailClass": "FirstClass", 
+  "recipients": [ 
+</div>
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 9 of 33</div>
+
+        <div class="page-text">    { 
+      "company": "PCM Integrations", 
+      "firstName": "Alex", 
+      "lastName": "Doe", 
+      "address": "2145 Sunnydale Blvd", 
+      "address2": "Bldg. 102", 
+      "city": "Clearwater", 
+      "state": "FL", 
+      "zipCode": "33765", 
+      "extRefNbr": "string", 
+      "variables": [ 
+        { 
+          "key": "string", 
+          "value": "string" 
+        } 
+      ] 
+    } 
+  ], 
+  "size": "46", 
+  "addons": null, 
+  "designID": 0, 
+  "front": "Raw HTML", 
+  "back": "Raw HTML", 
+  "addressing": { 
+    "font": "Bradley Hand", 
+    "fontColor": "Black", 
+    "exceptionalAddressingType": "resident" 
+  }, 
+  "extRefNbr": "string", 
+  "mailDate": "YYYY-MM-DD", 
+  "returnAddress": { 
+    "company": "PCM Integrations", 
+    "firstName": "Alex", 
+    "lastName": "Doe", 
+    "address": "2145 Sunnydale Blvd", 
+    "address2": "Bldg. 102", 
+    "city": "Clearwater", 
+    "state": "FL", 
+    "zipCode": "33765" 
+  }, 
+  "globalDesignVariables": [ 
+    { 
+      "key": "string", 
+      "value": "string" 
+    } 
+  ], 
+  "qrCodeID": 0, 
+  "qrCodeConfig": { 
+    "url": "string", 
+    "dotOptions": { 
+      "type": "square", 
+      "color": "#000", 
+      "gradient": { 
+        "type": "radial", 
+</div>
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 10 of 33</div>
+
+        <div class="page-text">        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    }, 
+    "cornerBorderOptions": { 
+      "type": "square", 
+      "color": "#FFF", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    }, 
+    "cornerDotOptions": { 
+      "type": "square", 
+      "color": "#FFF", 
+      "gradient": { 
+        "type": "radial", 
+        "rotation": 0, 
+        "colorStops": [ 
+          { 
+            "offset": 0, 
+            "color": "#FFF" 
+          } 
+        ] 
+      } 
+    } 
+  } 
+}' 
+</div>
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 11 of 33</div>
+
+        <img class="page-image" src="images/page_11_img_1.png" alt="Page 11 Image 1">
+
+        <img class="page-image" src="images/page_11_img_2.png" alt="Page 11 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 12 of 33</div>
+
+        <img class="page-image" src="images/page_12_img_1.png" alt="Page 12 Image 1">
+
+        <img class="page-image" src="images/page_12_img_2.png" alt="Page 12 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 13 of 33</div>
+
+        <div class="page-text"> 
+ 
+ 
+https://docs.pcmintegrations.com/docs/directmail-api/d4d3022bcf3a8-get-order-recipients 
+</div>
+
+        <img class="page-image" src="images/page_13_img_1.png" alt="Page 13 Image 1">
+
+        <img class="page-image" src="images/page_13_img_2.png" alt="Page 13 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 14 of 33</div>
+
+        <img class="page-image" src="images/page_14_img_1.png" alt="Page 14 Image 1">
+
+        <img class="page-image" src="images/page_14_img_2.png" alt="Page 14 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 15 of 33</div>
+
+        <div class="page-text"> 
+ 
+{ 
+  "results": [ 
+    { 
+      "firstName": "Alex", 
+      "lastName": "Doe", 
+      "address": "2145 Sunnydale Blvd", 
+      "address2": "Bldg. 102", 
+      "city": "Clearwater", 
+      "state": "FL", 
+      "zipCode": "33765", 
+      "extRefNbr": null, 
+      "undeliverable": true, 
+      "undeliverableReason": null, 
+      "variables": [ 
+        { 
+          "key": "string", 
+          "value": "string" 
+        } 
+      ], 
+      "proof": "https://domain.com/designProofs/uuid.pdf" 
+    } 
+  ], 
+  "pagination": { 
+    "page": 2, 
+    "perPage": 10, 
+    "nextPage": "/path?page=3&perPage=10", 
+    "prevPage": "/path?page=1&perPage=10", 
+    "totalPages": 0, 
+    "totalResults": 0 
+  } 
+} 
+</div>
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 16 of 33</div>
+
+        <img class="page-image" src="images/page_16_img_1.png" alt="Page 16 Image 1">
+
+        <img class="page-image" src="images/page_16_img_2.png" alt="Page 16 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 17 of 33</div>
+
+        <img class="page-image" src="images/page_17_img_1.png" alt="Page 17 Image 1">
+
+        <img class="page-image" src="images/page_17_img_2.png" alt="Page 17 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 18 of 33</div>
+
+        <img class="page-image" src="images/page_18_img_1.png" alt="Page 18 Image 1">
+
+        <img class="page-image" src="images/page_18_img_2.png" alt="Page 18 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 19 of 33</div>
+
+        <img class="page-image" src="images/page_19_img_1.png" alt="Page 19 Image 1">
+
+        <img class="page-image" src="images/page_19_img_2.png" alt="Page 19 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 20 of 33</div>
+
+        <div class="page-text">https://docs.pcmintegrations.com/docs/directmail-api/3d3a3000ff275-get-all-designs 
+ 
+ 
+</div>
+
+        <img class="page-image" src="images/page_20_img_1.png" alt="Page 20 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 21 of 33</div>
+
+        <img class="page-image" src="images/page_21_img_1.png" alt="Page 21 Image 1">
+
+        <img class="page-image" src="images/page_21_img_2.png" alt="Page 21 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 22 of 33</div>
+
+        <img class="page-image" src="images/page_22_img_1.png" alt="Page 22 Image 1">
+
+        <img class="page-image" src="images/page_22_img_2.png" alt="Page 22 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 23 of 33</div>
+
+        <img class="page-image" src="images/page_23_img_1.png" alt="Page 23 Image 1">
+
+        <img class="page-image" src="images/page_23_img_2.png" alt="Page 23 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 24 of 33</div>
+
+        <div class="page-text"> 
+500 is the same as 401 
+ 
+https://docs.pcmintegrations.com/docs/directmail-api/50f5cbbb72804-order-response 
+ 
+ 
+</div>
+
+        <img class="page-image" src="images/page_24_img_1.png" alt="Page 24 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 25 of 33</div>
+
+        <div class="page-text"> 
+https://docs.pcmintegrations.com/docs/directmail-api/iuc7kuzptpgwv-cancel-order 
+</div>
+
+        <img class="page-image" src="images/page_25_img_1.png" alt="Page 25 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 26 of 33</div>
+
+        <img class="page-image" src="images/page_26_img_1.png" alt="Page 26 Image 1">
+
+        <img class="page-image" src="images/page_26_img_2.png" alt="Page 26 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 27 of 33</div>
+
+        <div class="page-text"> 
+401, 404, and 500 are the same as 400 
+ 
+https://docs.pcmintegrations.com/docs/directmail-api/k49y925eo4waw-verify-recipients 
+ 
+</div>
+
+        <img class="page-image" src="images/page_27_img_1.png" alt="Page 27 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 28 of 33</div>
+
+        <img class="page-image" src="images/page_28_img_1.png" alt="Page 28 Image 1">
+
+        <img class="page-image" src="images/page_28_img_2.png" alt="Page 28 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 29 of 33</div>
+
+        <div class="page-text"> 
+ 
+401 & 500 are the same as 400 
+ 
+</div>
+
+        <img class="page-image" src="images/page_29_img_1.png" alt="Page 29 Image 1">
+
+        <img class="page-image" src="images/page_29_img_2.png" alt="Page 29 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 30 of 33</div>
+
+        <div class="page-text">https://docs.pcmintegrations.com/docs/directmail-api/2cd98e3e8dc89-get-batch-recipients 
+ 
+ 
+</div>
+
+        <img class="page-image" src="images/page_30_img_1.png" alt="Page 30 Image 1">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 31 of 33</div>
+
+        <img class="page-image" src="images/page_31_img_1.png" alt="Page 31 Image 1">
+
+        <img class="page-image" src="images/page_31_img_2.png" alt="Page 31 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 32 of 33</div>
+
+        <img class="page-image" src="images/page_32_img_1.png" alt="Page 32 Image 1">
+
+        <img class="page-image" src="images/page_32_img_2.png" alt="Page 32 Image 2">
+
+    </div>
+
+    <div class="page">
+        <div class="page-number">Page 33 of 33</div>
+
+        <div class="page-text"> 
+ 
+401, 404, and 500 are the same as 400
+</div>
+
+        <img class="page-image" src="images/page_33_img_1.png" alt="Page 33 Image 1">
+
+        <img class="page-image" src="images/page_33_img_2.png" alt="Page 33 Image 2">
+
+    </div>
+
+</body>
+</html>

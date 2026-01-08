@@ -15,6 +15,7 @@ Transform your mindset with daily affirmation postcards delivered to your door. 
 - Upsell/downsell flow with promotional offers
 - Hotjar analytics integration for user behavior tracking
 - **Postmark email service integration** for transactional emails
+- **Postcard Mania API integration** for automated postcard fulfillment
 
 ## 🔒 Security
 
@@ -157,6 +158,15 @@ REACT_APP_ENABLE_HOTJAR=false              # Set to 'true' to enable in developm
 POSTMARK_API_KEY=your_postmark_api_key      # From Postmark Dashboard
 POSTMARK_SERVER_ID=your_postmark_server_id  # From Postmark Dashboard
 EMAIL_FROM=noreply@positivepostcards.com    # Verified sender address
+
+# Postcard Mania API (for postcard fulfillment)
+PCM_API_KEY=your_pcm_api_key                # From PCM Integrations Portal
+PCM_API_SECRET=your_pcm_api_secret          # From PCM Integrations Portal
+PCM_RETURN_COMPANY=Positive Postcards       # Return address company name
+PCM_RETURN_ADDRESS=123 Main Street          # Return address
+PCM_RETURN_CITY=Clearwater                  # Return address city
+PCM_RETURN_STATE=FL                         # Return address state
+PCM_RETURN_ZIP=33765                        # Return address zip
 ```
 
 ### Optional Variables
@@ -190,6 +200,15 @@ STRIPE_WEBHOOK_SECRET=whsec_...             # Webhook endpoint secret
    - Get your API key from the API Tokens section
    - Get your Server ID from the server settings
    - **Verify your sender domain** in the Signatures section
+
+5. **Postcard Mania API** (for postcard fulfillment):
+   - Create account at [Postcard Mania](https://www.postcardmania.com/)
+   - Access the [PCM Integrations Portal](https://pcmintegrations.com/)
+   - Go to My Account → API Keys
+   - Generate Sandbox keys for testing (orders not processed)
+   - Generate Production keys for live mailings
+   - **Create 365 designs** named PP-001 through PP-365 in the dashboard
+   - See [README_PCM_INTEGRATION.md](README_PCM_INTEGRATION.md) for full setup guide
 
 ## 📊 Analytics Configuration
 
@@ -278,8 +297,16 @@ The application uses [Postmark](https://postmarkapp.com/) for reliable transacti
 ### Email Service (Development Only)
 - `POST /api/test-email` - Send test emails (available in development mode)
 
+### Postcard Mania (Development Only)
+- `GET /api/pcm/test` - Test PCM API connection
+- `GET /api/pcm/designs` - List all designs from PCM account
+- `POST /api/pcm/test-order` - Place a test postcard order
+- `POST /api/pcm/verify-address` - Verify recipient address
+- `GET /api/pcm/retry-queue` - View failed orders queue
+- `POST /api/pcm/simulate-subscription` - Simulate full subscription campaign
+
 ### Webhooks
-- `POST /webhook` - Stripe webhook handler
+- `POST /webhook` - Stripe webhook handler (triggers PCM postcard campaigns)
 
 ## 🧪 Testing
 
