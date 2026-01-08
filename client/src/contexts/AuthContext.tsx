@@ -8,6 +8,7 @@ import React, {
 
 interface AuthContextType {
 	isAuthenticated: boolean;
+	isLoading: boolean;
 	user: {
 		email: string;
 		customerId: string;
@@ -27,15 +28,44 @@ export const useAuth = () => {
 	return context;
 };
 
+// Helper to safely get initial auth state from localStorage
+const getInitialAuthState = () => {
+	try {
+		const token = localStorage.getItem('sessionToken');
+		const userStr = localStorage.getItem('user');
+		if (token && userStr) {
+			const userData = JSON.parse(userStr);
+			return {
+				sessionToken: token,
+				user: userData,
+				isAuthenticated: true,
+			};
+		}
+	} catch (error) {
+		console.error('Error loading initial auth state:', error);
+		localStorage.removeItem('sessionToken');
+		localStorage.removeItem('user');
+	}
+	return {
+		sessionToken: null,
+		user: null,
+		isAuthenticated: false,
+	};
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	// Initialize state synchronously from localStorage to prevent race conditions
+	const initialState = getInitialAuthState();
+	
+	const [isAuthenticated, setIsAuthenticated] = useState(initialState.isAuthenticated);
 	const [user, setUser] = useState<{
 		email: string;
 		customerId: string;
-	} | null>(null);
-	const [sessionToken, setSessionToken] = useState<string | null>(null);
+	} | null>(initialState.user);
+	const [sessionToken, setSessionToken] = useState<string | null>(initialState.sessionToken);
+	const [isLoading, setIsLoading] = useState(true);
 
 	const logout = () => {
 		localStorage.removeItem('sessionToken');
@@ -45,22 +75,39 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 		setIsAuthenticated(false);
 	};
 
-	// Load session from localStorage on mount
+	// Validate session on mount (check if token is still valid on server)
 	useEffect(() => {
-		const token = localStorage.getItem('sessionToken');
-		const userStr = localStorage.getItem('user');
-
-		if (token && userStr) {
-			try {
-				const userData = JSON.parse(userStr);
-				setSessionToken(token);
-				setUser(userData);
-				setIsAuthenticated(true);
-			} catch (error) {
-				console.error('Error loading session:', error);
-				logout();
+		const validateSession = async () => {
+			if (!initialState.sessionToken) {
+				setIsLoading(false);
+				return;
 			}
-		}
+
+			try {
+				// Verify the token is still valid on the server
+				const response = await fetch(
+					`${process.env.REACT_APP_API_URL}/api/dashboard`,
+					{
+						headers: {
+							Authorization: `Bearer ${initialState.sessionToken}`,
+						},
+					}
+				);
+
+				if (!response.ok) {
+					// Token is invalid, clear auth state
+					console.log('Session token expired, logging out');
+					logout();
+				}
+			} catch (error) {
+				console.error('Error validating session:', error);
+				// Keep user logged in on network errors (they'll get an error when they try to do something)
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		validateSession();
 	}, []);
 
 	const login = (token: string, email: string, customerId: string) => {
@@ -74,7 +121,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
 	return (
 		<AuthContext.Provider
-			value={{ isAuthenticated, user, sessionToken, login, logout }}>
+			value={{ isAuthenticated, isLoading, user, sessionToken, login, logout }}>
 			{children}
 		</AuthContext.Provider>
 	);

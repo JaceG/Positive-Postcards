@@ -74,7 +74,7 @@ class EmailService {
 							<p>If you didn't request this login link, you can safely ignore this email.</p>
 						</div>
 						<div class="footer">
-							<p>© 2025 Positive Postcards. Spreading positivity, one postcard at a time.</p>
+							<p>© 2026 Positive Postcards. Spreading positivity, one postcard at a time.</p>
 							<p>Questions? Reply to this email or visit our help center.</p>
 						</div>
 					</body>
@@ -89,7 +89,7 @@ This link expires in 15 minutes for your security.
 
 If you didn't request this login link, you can safely ignore this email.
 
-© 2025 Positive Postcards
+© 2026 Positive Postcards
 				`,
 				MessageStream: 'outbound',
 			});
@@ -159,7 +159,7 @@ If you didn't request this login link, you can safely ignore this email.
 							<p>Ready to spread even more positivity? Share Positive Postcards with friends and family!</p>
 						</div>
 						<div class="footer">
-							<p>© 2025 Positive Postcards. Spreading positivity, one postcard at a time.</p>
+							<p>© 2026 Positive Postcards. Spreading positivity, one postcard at a time.</p>
 							<p>Questions? Reply to this email - we'd love to hear from you!</p>
 						</div>
 					</body>
@@ -183,7 +183,7 @@ Subscription Details:
 
 Ready to spread even more positivity? Share Positive Postcards with friends and family!
 
-© 2025 Positive Postcards
+© 2026 Positive Postcards
 Questions? Reply to this email - we'd love to hear from you!
 				`,
 				MessageStream: 'outbound',
@@ -252,7 +252,7 @@ Questions? Reply to this email - we'd love to hear from you!
 							<p>Want to come back? You can restart your subscription anytime by visiting our website.</p>
 						</div>
 						<div class="footer">
-							<p>© 2025 Positive Postcards. Thank you for being part of our community.</p>
+							<p>© 2026 Positive Postcards. Thank you for being part of our community.</p>
 							<p>Questions? Reply to this email - we're here to help!</p>
 						</div>
 					</body>
@@ -277,7 +277,7 @@ We hope Positive Postcards brought some joy to your days. If you'd like to share
 
 Want to come back? You can restart your subscription anytime.
 
-© 2025 Positive Postcards
+© 2026 Positive Postcards
 Questions? Reply to this email - we're here to help!
 				`,
 				MessageStream: 'outbound',
@@ -348,7 +348,7 @@ Questions? Reply to this email - we're here to help!
 							<p>If you continue to experience issues or have questions, please don't hesitate to reach out to our support team.</p>
 						</div>
 						<div class="footer">
-							<p>© 2025 Positive Postcards. We're here to help!</p>
+							<p>© 2026 Positive Postcards. We're here to help!</p>
 							<p>Questions? Reply to this email or contact support.</p>
 						</div>
 					</body>
@@ -369,7 +369,7 @@ Next Steps:
 
 Questions? Reply to this email or contact support.
 
-© 2025 Positive Postcards
+© 2026 Positive Postcards
 				`,
 				MessageStream: 'outbound',
 			});

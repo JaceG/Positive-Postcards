@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
 				</a>
 			</div>
 			<p className='copyright'>
-				© 2025 Positive Postcards. Spreading joy, one card at a time.
+				© 2026 Positive Postcards. Spreading joy, one card at a time.
 			</p>
 		</footer>
 	);

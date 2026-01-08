@@ -371,4 +371,4 @@ The site will be hosted at: **www.positivepost.cards**
 
 ## 📝 License
 
-© 2025 Positive Postcards. All rights reserved.
+© 2026 Positive Postcards. All rights reserved.

@@ -61,7 +61,7 @@ interface PlanChangePreview {
 
 const Dashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const { user, sessionToken, logout } = useAuth();
+	const { user, sessionToken, logout, isLoading: authLoading } = useAuth();
 	const [loading, setLoading] = useState(true);
 	const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 	const [showPauseModal, setShowPauseModal] = useState(false);
@@ -128,6 +128,11 @@ const Dashboard: React.FC = () => {
 	}, [sessionToken]);
 
 	useEffect(() => {
+		// Wait for auth state to load before checking session
+		if (authLoading) {
+			return;
+		}
+		
 		if (!sessionToken) {
 			navigate('/login');
 			return;
@@ -135,7 +140,7 @@ const Dashboard: React.FC = () => {
 
 		fetchDashboardData();
 		fetchAvailablePlans();
-	}, [sessionToken, navigate, logout, fetchDashboardData, fetchAvailablePlans]);
+	}, [authLoading, sessionToken, navigate, logout, fetchDashboardData, fetchAvailablePlans]);
 
 	const handleBillingPortal = async () => {
 		try {
@@ -346,7 +351,7 @@ const Dashboard: React.FC = () => {
 		return { label: subscription.status, class: 'status-inactive' };
 	};
 
-	if (loading) {
+	if (authLoading || loading) {
 		return (
 			<div className='dashboard-loading'>
 				<div className='spinner'></div>
