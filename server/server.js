@@ -33,7 +33,7 @@ app.use(
 	cors({
 		origin:
 			process.env.NODE_ENV === 'production'
-				? 'https://positive-postcards.onrender.com'
+				? 'https://www.positivepost.cards'
 				: 'http://localhost:3000',
 		credentials: true,
 	})
@@ -243,7 +243,7 @@ app.post('/api/auth/send-magic-link', async (req, res) => {
 		// Create magic link URL
 		const baseUrl =
 			process.env.NODE_ENV === 'production'
-				? 'https://positive-postcards.onrender.com'
+				? 'https://www.positivepost.cards'
 				: 'http://localhost:3000';
 		const magicLink = `${baseUrl}/auth/verify?token=${token}`;
 
