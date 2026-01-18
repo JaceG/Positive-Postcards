@@ -47,7 +47,7 @@ const OrderSummary: React.FC<{
 
 	const getDisplayPrice = () => {
 		if (activePromo === 'trial') return 7;
-		if (activePromo === 'upsell') return 37.5;
+		if (activePromo === 'upsell') return 60;
 		return total;
 	};
 
@@ -470,31 +470,31 @@ const CheckoutForm: React.FC<{
 			<form onSubmit={handleSubmit} className='checkout-form'>
 				{activePromo && (
 					<div className={`active-promo-banner ${activePromo}`}>
-						{activePromo === 'trial' ? (
-							<>
-								<h3>🎉 7-Day Trial for $7</h3>
-								<p>
-									You're getting our special trial offer! Try
-									Positive Postcards for 7 days for just $7.
-								</p>
-								<p className='promo-details'>
-									After 7 days, your subscription will
-									continue at $60/month unless cancelled.
-								</p>
-							</>
-						) : (
-							<>
-								<h3>💰 50% Off First Month</h3>
-								<p>
-									You're getting 50% off your first month! Pay
-									just $37.50 instead of $75.
-								</p>
-								<p className='promo-details'>
-									After the first month, your subscription
-									will continue at $60/month.
-								</p>
-							</>
-						)}
+				{activePromo === 'trial' ? (
+					<>
+						<h3>🎉 7-Day Trial for $7</h3>
+						<p>
+							You're getting our special trial offer! Try
+							Positive Postcards for 7 days for just $7.
+						</p>
+						<p className='promo-details'>
+							After 7 days, your subscription will
+							continue at $120/month unless cancelled.
+						</p>
+					</>
+				) : (
+					<>
+						<h3>💰 50% Off First Month</h3>
+						<p>
+							You're getting 50% off your first month! Pay
+							just $60 instead of $120.
+						</p>
+						<p className='promo-details'>
+							After the first month, your subscription
+							will continue at $120/month.
+						</p>
+					</>
+				)}
 					</div>
 				)}
 
@@ -800,16 +800,16 @@ const CheckoutForm: React.FC<{
 						</span>
 					</div>
 					{activePromo && (
-						<div className='summary-row promo-row'>
-							<span>
-								{activePromo === 'trial'
-									? '7-Day Trial Special'
-									: '50% Off First Month'}
-							</span>
-							<span className='promo-price'>
-								{activePromo === 'trial' ? '$7.00' : '$37.50'}
-							</span>
-						</div>
+					<div className='summary-row promo-row'>
+						<span>
+							{activePromo === 'trial'
+								? '7-Day Trial Special'
+								: '50% Off First Month'}
+						</span>
+						<span className='promo-price'>
+							{activePromo === 'trial' ? '$7.00' : '$60.00'}
+						</span>
+					</div>
 					)}
 					{promoDiscount > 0 && (
 						<div className='summary-row discount-row'>
@@ -824,22 +824,22 @@ const CheckoutForm: React.FC<{
 					)}
 					<div className='summary-row total-row'>
 						<span>Total (first payment)</span>
-						<span className='summary-price'>
-							$
-							{activePromo === 'trial'
-								? '7.00'
-								: activePromo === 'upsell'
-								? '37.50'
-								: getTotalWithDiscount().toFixed(2)}
-						</span>
+					<span className='summary-price'>
+						$
+						{activePromo === 'trial'
+							? '7.00'
+							: activePromo === 'upsell'
+							? '60.00'
+							: getTotalWithDiscount().toFixed(2)}
+					</span>
 					</div>
 					<p className='summary-note'>
-						{activePromo === 'trial'
-							? 'Then $60/month after 7 days unless cancelled.'
-							: activePromo === 'upsell'
-							? 'Then $60/month after first month.'
-							: 'Your subscription will renew automatically at this rate.'}
-					</p>
+					{activePromo === 'trial'
+						? 'Then $120/month after 7 days unless cancelled.'
+						: activePromo === 'upsell'
+						? 'Then $120/month after first month.'
+						: 'Your subscription will renew automatically at this rate.'}
+				</p>
 				</div>
 
 				<button
@@ -851,7 +851,7 @@ const CheckoutForm: React.FC<{
 						: activePromo === 'trial'
 						? 'Start 7-Day Trial for $7'
 						: activePromo === 'upsell'
-						? 'Get 50% Off - Pay $37.50'
+						? 'Get 50% Off - Pay $60'
 						: `Subscribe for $${getTotalWithDiscount().toFixed(2)}`}
 				</button>
 

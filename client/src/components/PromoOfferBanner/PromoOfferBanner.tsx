@@ -97,16 +97,16 @@ const PromoOfferBanner: React.FC<PromoOfferBannerProps> = ({
 						💰 Get 50% OFF Your First Month!
 					</h2>
 					<p className='promo-subtext'>
-						Only $37.50 instead of $75 - Save $37.50!
+						Only $60 instead of $120 - Save $60!
 					</p>
 					<div className='promo-comparison'>
 						<div className='price-old'>
 							<span className='label'>Regular Price:</span>
-							<span className='amount'>$75</span>
+							<span className='amount'>$120</span>
 						</div>
 						<div className='price-new'>
 							<span className='label'>Your Price:</span>
-							<span className='amount'>$37.50</span>
+							<span className='amount'>$60</span>
 						</div>
 					</div>
 					<button
@@ -115,7 +115,7 @@ const PromoOfferBanner: React.FC<PromoOfferBannerProps> = ({
 						Claim 50% Discount
 					</button>
 					<p className='promo-disclaimer'>
-						*Then $60/month after first month
+						*Then $120/month after first month
 					</p>
 				</div>
 			</div>

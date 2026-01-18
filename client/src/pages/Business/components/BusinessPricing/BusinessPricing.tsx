@@ -20,7 +20,7 @@ const BusinessPricing: React.FC = () => {
 		{
 			name: 'Starter',
 			minEmployees: '10-50 employees',
-			pricePerPerson: '$45',
+			pricePerPerson: '$90',
 			billingCycle: 'per person/month',
 			features: [
 				'Monthly postcards per employee',
@@ -33,7 +33,7 @@ const BusinessPricing: React.FC = () => {
 		{
 			name: 'Growth',
 			minEmployees: '51-200 employees',
-			pricePerPerson: '$40',
+			pricePerPerson: '$80',
 			billingCycle: 'per person/month',
 			features: [
 				'Everything in Starter',
@@ -69,7 +69,7 @@ const BusinessPricing: React.FC = () => {
 
 		// For non-enterprise plans, add to cart with a default employee count
 		if (planName !== 'Enterprise') {
-			const pricePerPerson = planName === 'Starter' ? 45 : 40;
+			const pricePerPerson = planName === 'Starter' ? 90 : 80;
 			const defaultEmployeeCount = planName === 'Starter' ? 25 : 100;
 
 			addToCart({
@@ -152,38 +152,38 @@ const BusinessPricing: React.FC = () => {
 				</div>
 
 				<div className='pricing-details'>
-					<div className='savings-comparison'>
-						<h3>🏢 Business Volume Savings</h3>
-						<div className='comparison-grid'>
-							<div className='comparison-item'>
-								<div className='comparison-label'>
-									Individual Rate
-								</div>
-								<div className='comparison-price'>
-									$60/month
-								</div>
-								<div className='comparison-note'>
-									Per person, monthly billing
-								</div>
+				<div className='savings-comparison'>
+					<h3>🏢 Business Volume Savings</h3>
+					<div className='comparison-grid'>
+						<div className='comparison-item'>
+							<div className='comparison-label'>
+								Individual Rate
 							</div>
-							<div className='comparison-arrow'>→</div>
-							<div className='comparison-item featured'>
-								<div className='comparison-label'>
-									Business Rate
-								</div>
-								<div className='comparison-price'>
-									$40/month
-								</div>
-								<div className='comparison-note'>
-									Per employee, growth tier
-								</div>
+							<div className='comparison-price'>
+								$120/month
+							</div>
+							<div className='comparison-note'>
+								Per person, monthly billing
 							</div>
 						</div>
-						<div className='savings-highlight'>
-							<strong>Save $20 per employee per month</strong> •
-							$240 annual savings per person
+						<div className='comparison-arrow'>→</div>
+						<div className='comparison-item featured'>
+							<div className='comparison-label'>
+								Business Rate
+							</div>
+							<div className='comparison-price'>
+								$80/month
+							</div>
+							<div className='comparison-note'>
+								Per employee, growth tier
+							</div>
 						</div>
 					</div>
+					<div className='savings-highlight'>
+						<strong>Save $40 per employee per month</strong> •
+						$480 annual savings per person
+					</div>
+				</div>
 
 					<div className='details-grid'>
 						<div className='detail-item'>

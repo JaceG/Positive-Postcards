@@ -149,148 +149,32 @@ app.post('/api/create-subscription', async (req, res) => {
 	}
 });
 
-// Get subscription prices (create them if they don't exist)
+// Stripe price configuration (from setupStripeProducts.js)
+const { STRIPE_PRICES, STRIPE_PRODUCTS, PRICE_AMOUNTS } = require('./config/stripePrices');
+
+// Get subscription prices - returns pre-configured price IDs
 app.get('/api/prices', async (req, res) => {
 	try {
-		// Define your subscription products
-		const products = {
-			individual: {
-				name: 'Positive Postcards Individual Subscription',
-				description:
-					'Daily affirmation postcards delivered to your door',
-			},
-			business: {
-				name: 'Positive Postcards Business Subscription',
-				description:
-					'Employee wellness through daily positive postcards',
-			},
+		// Return the pre-configured prices with their IDs
+		// These were created by server/scripts/setupStripeProducts.js
+		const prices = {
+			individual_monthly: { id: STRIPE_PRICES.individual_monthly, unit_amount: PRICE_AMOUNTS.individual_monthly },
+			individual_quarterly: { id: STRIPE_PRICES.individual_quarterly, unit_amount: PRICE_AMOUNTS.individual_quarterly },
+			individual_annual: { id: STRIPE_PRICES.individual_annual, unit_amount: PRICE_AMOUNTS.individual_annual },
+			promo_trial_7days: { id: STRIPE_PRICES.promo_trial_7days, unit_amount: PRICE_AMOUNTS.promo_trial_7days },
+			promo_first_month_half: { id: STRIPE_PRICES.promo_first_month_half, unit_amount: PRICE_AMOUNTS.promo_first_month_half },
+			promo_downsell_monthly: { id: STRIPE_PRICES.promo_downsell_monthly, unit_amount: PRICE_AMOUNTS.promo_downsell_monthly },
+			business_starter: { id: STRIPE_PRICES.business_starter, unit_amount: PRICE_AMOUNTS.business_starter },
+			business_growth: { id: STRIPE_PRICES.business_growth, unit_amount: PRICE_AMOUNTS.business_growth },
 		};
 
-		// Define your pricing tiers
-		const pricingTiers = [
-			{ nickname: 'monthly', amount: 6000, interval: 'month' },
-			{
-				nickname: 'quarterly',
-				amount: 9900,
-				interval: 'month',
-				interval_count: 3,
-			},
-			{ nickname: 'annual', amount: 36000, interval: 'year' },
-		];
-
-		// Define promotional prices
-		const promotionalPrices = [
-			{
-				nickname: 'trial_7days',
-				amount: 700, // $7 for 7 days
-				trial_period_days: 7,
-				interval: 'month',
-				metadata: {
-					type: 'trial',
-					description: '7 days for $7',
-				},
-			},
-			{
-				nickname: 'first_month_half',
-				amount: 3750, // $37.50 for first month (50% off)
-				interval: 'month',
-				metadata: {
-					type: 'promotional',
-					description: 'First month 50% off',
-					regular_price_after: '6000',
-				},
-			},
-		];
-
-		// Get or create products
-		const stripeProducts = {};
-		for (const [key, productData] of Object.entries(products)) {
-			const existingProducts = await stripe.products.search({
-				query: `name:"${productData.name}"`,
-			});
-
-			if (existingProducts.data.length > 0) {
-				stripeProducts[key] = existingProducts.data[0];
-			} else {
-				stripeProducts[key] = await stripe.products.create({
-					name: productData.name,
-					description: productData.description,
-				});
-			}
-		}
-
-		// Get or create regular prices
-		const prices = {};
-		for (const tier of pricingTiers) {
-			const priceKey = `individual_${tier.nickname}`;
-			const existingPrices = await stripe.prices.list({
-				product: stripeProducts.individual.id,
-				active: true,
-			});
-
-			const existingPrice = existingPrices.data.find(
-				(p) =>
-					p.nickname === tier.nickname &&
-					p.unit_amount === tier.amount
-			);
-
-			if (existingPrice) {
-				prices[priceKey] = existingPrice;
-			} else {
-				prices[priceKey] = await stripe.prices.create({
-					product: stripeProducts.individual.id,
-					unit_amount: tier.amount,
-					currency: 'usd',
-					recurring: {
-						interval: tier.interval,
-						interval_count: tier.interval_count || 1,
-					},
-					nickname: tier.nickname,
-				});
-			}
-		}
-
-		// Get or create promotional prices
-		for (const promo of promotionalPrices) {
-			const priceKey = `promo_${promo.nickname}`;
-			const existingPrices = await stripe.prices.list({
-				product: stripeProducts.individual.id,
-				active: true,
-			});
-
-			const existingPrice = existingPrices.data.find(
-				(p) =>
-					p.nickname === promo.nickname &&
-					p.unit_amount === promo.amount
-			);
-
-			if (existingPrice) {
-				prices[priceKey] = existingPrice;
-			} else {
-				const priceData = {
-					product: stripeProducts.individual.id,
-					unit_amount: promo.amount,
-					currency: 'usd',
-					recurring: {
-						interval: promo.interval,
-						interval_count: promo.interval_count || 1,
-					},
-					nickname: promo.nickname,
-					metadata: promo.metadata,
-				};
-
-				// Add trial period if specified
-				if (promo.trial_period_days) {
-					priceData.recurring.trial_period_days =
-						promo.trial_period_days;
-				}
-
-				prices[priceKey] = await stripe.prices.create(priceData);
-			}
-		}
+		const products = {
+			individual: { id: STRIPE_PRODUCTS.individual },
+			business: { id: STRIPE_PRODUCTS.business },
+		};
 
 		res.json({
-			products: stripeProducts,
+			products,
 			prices,
 		});
 	} catch (error) {

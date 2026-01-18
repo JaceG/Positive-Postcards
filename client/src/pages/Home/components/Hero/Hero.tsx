@@ -66,9 +66,9 @@ const Hero: React.FC = () => {
 							<a href='#pricing' className='btn btn-primary'>
 								Start Your Journey
 							</a>
-							<span className='price-note'>
-								From <strong>less than $1/day</strong>
-							</span>
+						<span className='price-note'>
+							From <strong>just $2/day</strong>
+						</span>
 						</div>
 					</div>
 				</div>

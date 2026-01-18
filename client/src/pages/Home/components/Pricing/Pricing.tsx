@@ -78,10 +78,10 @@ const Pricing: React.FC = () => {
 	const plans: PricingPlan[] = [
 		{
 			name: 'Monthly',
-			price: '$60',
-			originalPrice: 'Normally $75',
+			price: '$120',
+			originalPrice: 'Normally $150',
 			period: 'Billed monthly',
-			perDay: '$2 per day',
+			perDay: '$4 per day',
 			features: [
 				'30 unique postcards monthly',
 				'Beautiful rotating designs',
@@ -93,34 +93,35 @@ const Pricing: React.FC = () => {
 		},
 		{
 			name: 'Quarterly',
-			price: '$99',
-			originalPrice: 'Worth $180',
+			price: '$198',
+			originalPrice: 'Worth $360',
 			period: 'Billed every 3 months',
-			perDay: 'Just $1.10 per day!',
+			perDay: 'Just $2.20 per day!',
 			savings: 'Save 45% vs Monthly',
 			features: [
 				'90 unique postcards (3 months)',
-				'Priority access to new designs',
+				'Beautiful rotating designs',
 				'Premium eco-friendly cardstock',
-				'Gift wrapping available',
+				'Free shipping always',
+				'Pause or cancel anytime',
 				'Bonus welcome package',
-				'Perfect commitment balance',
+
 			],
 			isPopular: true,
 			ctaText: 'Choose Quarterly',
 		},
 		{
 			name: 'Annual',
-			price: '$360',
-			originalPrice: 'Worth $720',
+			price: '$720',
+			originalPrice: 'Worth $1,440',
 			period: 'Billed annually',
-			perDay: 'Under $1 per day!',
+			perDay: 'Just $2 per day!',
 			savings: 'Save 50% • Founding Member Bonus',
 			features: [
 				'365 unique postcards (full year)',
 				'Exclusive annual-only designs',
 				'Premium eco-friendly cardstock',
-				'2 free gift subscriptions included',
+				'2 free gift trials included',
 				'Founding member perks forever',
 				'Personalized anniversary card',
 			],
@@ -136,7 +137,7 @@ const Pricing: React.FC = () => {
 					Select the perfect plan for yourself or as a meaningful gift
 				</p>
 				<p className='pricing-subtitle'>
-					💰 Retail value $2/card • Get them for less than $1/day
+					💰 Retail value $4/card • Save up to 50% with longer plans
 				</p>
 			</div>
 
