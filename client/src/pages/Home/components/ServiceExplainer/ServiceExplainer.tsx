@@ -12,7 +12,7 @@ const ServiceExplainer: React.FC = () => {
 					<p className='explainer-description'>
 						Sign up yourself or someone you care about to receive
 						beautiful postcards with positive affirmations delivered
-						to your mailbox every day. Each postcard is carefully
+						to your mailbox every business day. Each postcard is carefully
 						designed to brighten your day and help build a positive
 						mindset, one uplifting message at a time.
 					</p>

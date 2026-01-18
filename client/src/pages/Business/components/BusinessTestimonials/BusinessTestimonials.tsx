@@ -1,168 +1,110 @@
 import React from 'react';
 import './BusinessTestimonials.css';
 
-interface Testimonial {
-	quote: string;
-	name: string;
+interface PotentialOutcome {
+	icon: string;
 	title: string;
-	company: string;
-	companySize: string;
-	result: string;
+	description: string;
 }
 
-interface CaseStudy {
-	company: string;
-	industry: string;
+interface UseCase {
+	title: string;
 	challenge: string;
-	result: string;
-	metric: string;
+	solution: string;
+	potentialBenefit: string;
 }
 
 const BusinessTestimonials: React.FC = () => {
-	const testimonials: Testimonial[] = [
+	const potentialOutcomes: PotentialOutcome[] = [
 		{
-			quote: 'Positive Postcards transformed our remote team culture. We went from struggling with employee engagement to having the highest retention rate in our industry. The personal touch makes all the difference.',
-			name: 'Sarah Chen',
-			title: 'Chief People Officer',
-			company: 'TechFlow Solutions',
-			companySize: '150 employees',
-			result: '34% reduction in turnover',
+			icon: '💼',
+			title: 'Employee Wellness Programs',
+			description:
+				'Help your team feel valued with daily positive reinforcement delivered directly to their homes—no app downloads or logins required.',
 		},
 		{
-			quote: "Our clients constantly mention the postcards we send. It's become our signature touch that sets us apart from every other agency. The ROI has been incredible—our client retention is up 45%.",
-			name: 'Marcus Rodriguez',
-			title: 'CEO',
-			company: 'Creative Dynamics',
-			companySize: '75 employees',
-			result: '45% increase in client retention',
+			icon: '🤝',
+			title: 'Client Appreciation',
+			description:
+				'Stand out from competitors with a thoughtful, ongoing touch that keeps your company top of mind throughout the year.',
 		},
 		{
-			quote: 'We tried every wellness app on the market. Nothing worked like Positive Postcards. Our employee satisfaction scores hit an all-time high, and our healthcare costs actually decreased.',
-			name: 'Dr. Amanda Foster',
-			title: 'VP of Human Resources',
-			company: 'MedCore Systems',
-			companySize: '300 employees',
-			result: '18% reduction in healthcare costs',
+			icon: '🎯',
+			title: 'Team Culture Building',
+			description:
+				'Foster connection in remote or hybrid teams with tangible moments of positivity that digital tools cannot replicate.',
 		},
 	];
 
-	const caseStudies: CaseStudy[] = [
+	const useCases: UseCase[] = [
 		{
-			company: 'Acme Corp',
-			industry: 'Technology',
-			challenge: 'High burnout in engineering team',
-			result: 'Improved team morale and collaboration',
-			metric: '73% reduction in stress-related sick days',
+			title: 'Remote Team Engagement',
+			challenge: 'Keeping distributed teams connected and motivated',
+			solution: 'Daily postcards create shared positive experiences',
+			potentialBenefit: 'Improved morale and team cohesion',
 		},
 		{
-			company: 'Global Services',
-			industry: 'Consulting',
-			challenge: 'Maintaining client relationships remotely',
-			result: 'Strengthened client partnerships',
-			metric: '28% increase in contract renewals',
+			title: 'Client Retention',
+			challenge: 'Standing out in a crowded market',
+			solution: 'Ongoing appreciation that competitors don\'t offer',
+			potentialBenefit: 'Stronger client relationships and loyalty',
 		},
 		{
-			company: 'StartUp Inc',
-			industry: 'SaaS',
-			challenge: 'Building team culture while scaling',
-			result: 'Maintained strong culture through growth',
-			metric: '92% employee satisfaction during 3x growth',
+			title: 'Employee Recognition',
+			challenge: 'Showing appreciation beyond annual reviews',
+			solution: 'Consistent, daily reminders that employees matter',
+			potentialBenefit: 'Higher satisfaction and reduced turnover',
 		},
-	];
-
-	const companyLogos = [
-		'Microsoft',
-		'Salesforce',
-		'Adobe',
-		'Shopify',
-		'Slack',
-		'Zoom',
-		'Airbnb',
-		'Dropbox',
-		'GitHub',
-		'Stripe',
 	];
 
 	return (
 		<section className='business-testimonials'>
 			<div className='container'>
 				<div className='section-header'>
-					<h2>Trusted by Leading Organizations</h2>
+					<h2>What You Could Experience</h2>
 					<p>
-						See how companies across industries are using Positive
-						Postcards to drive real business results
+						Explore how Positive Postcards can help your organization
+						build stronger connections
 					</p>
 				</div>
 
-				{/* Company Logos */}
-				<div className='company-logos'>
-					<div className='logos-scroll'>
-						{companyLogos.map((company, index) => (
-							<div key={index} className='company-logo'>
-								{company}
-							</div>
-						))}
-					</div>
-				</div>
-
-				{/* Featured Testimonials */}
+				{/* Potential Outcomes */}
 				<div className='testimonials-grid'>
-					{testimonials.map((testimonial, index) => (
+					{potentialOutcomes.map((outcome, index) => (
 						<div key={index} className='testimonial-card'>
 							<div className='testimonial-content'>
-								<div className='quote-mark'>"</div>
+								<div className='quote-mark'>{outcome.icon}</div>
+								<h3 className='outcome-title'>{outcome.title}</h3>
 								<p className='testimonial-quote'>
-									{testimonial.quote}
+									{outcome.description}
 								</p>
-							</div>
-
-							<div className='testimonial-author'>
-								<div className='author-info'>
-									<div className='author-name'>
-										{testimonial.name}
-									</div>
-									<div className='author-title'>
-										{testimonial.title}
-									</div>
-									<div className='author-company'>
-										{testimonial.company} •{' '}
-										{testimonial.companySize}
-									</div>
-								</div>
-								<div className='testimonial-result'>
-									<div className='result-badge'>
-										{testimonial.result}
-									</div>
-								</div>
 							</div>
 						</div>
 					))}
 				</div>
 
-				{/* Case Studies */}
+				{/* Use Cases */}
 				<div className='case-studies'>
-					<h3>Success Stories by the Numbers</h3>
+					<h3>Potential Use Cases</h3>
 					<div className='case-studies-grid'>
-						{caseStudies.map((study, index) => (
+						{useCases.map((useCase, index) => (
 							<div key={index} className='case-study-card'>
 								<div className='case-study-header'>
 									<div className='company-name'>
-										{study.company}
-									</div>
-									<div className='industry'>
-										{study.industry}
+										{useCase.title}
 									</div>
 								</div>
 								<div className='case-study-content'>
 									<div className='challenge'>
 										<strong>Challenge:</strong>{' '}
-										{study.challenge}
+										{useCase.challenge}
 									</div>
 									<div className='result'>
-										<strong>Result:</strong> {study.result}
+										<strong>Solution:</strong> {useCase.solution}
 									</div>
 									<div className='metric'>
-										<strong>Impact:</strong> {study.metric}
+										<strong>Potential Benefit:</strong>{' '}
+										{useCase.potentialBenefit}
 									</div>
 								</div>
 							</div>
@@ -170,29 +112,32 @@ const BusinessTestimonials: React.FC = () => {
 					</div>
 				</div>
 
-				{/* Social Proof Stats */}
+				{/* Value Props instead of fake stats */}
 				<div className='social-proof'>
 					<div className='proof-stats'>
 						<div className='proof-stat'>
-							<div className='stat-number'>500+</div>
-							<div className='stat-label'>Companies Trust Us</div>
+							<div className='stat-number'>25%</div>
+							<div className='stat-label'>Volume Discount Available</div>
 						</div>
 						<div className='proof-stat'>
-							<div className='stat-number'>50,000+</div>
-							<div className='stat-label'>Employees Engaged</div>
+							<div className='stat-number'>24hr</div>
+							<div className='stat-label'>Quick Setup Time</div>
 						</div>
 						<div className='proof-stat'>
-							<div className='stat-number'>1M+</div>
-							<div className='stat-label'>
-								Postcards Delivered
-							</div>
+							<div className='stat-number'>0</div>
+							<div className='stat-label'>IT Integration Needed</div>
 						</div>
 						<div className='proof-stat'>
-							<div className='stat-number'>96%</div>
-							<div className='stat-label'>Would Recommend</div>
+							<div className='stat-number'>Daily</div>
+							<div className='stat-label'>Postcards Per Employee</div>
 						</div>
 					</div>
 				</div>
+
+				{/* Disclaimer */}
+				<p className='disclaimer' style={{ textAlign: 'center', fontSize: '0.85rem', color: '#666', marginTop: '2rem' }}>
+					* Statistics referenced are from general research on physical mail effectiveness, not specific to Positive Postcards customers.
+				</p>
 			</div>
 		</section>
 	);

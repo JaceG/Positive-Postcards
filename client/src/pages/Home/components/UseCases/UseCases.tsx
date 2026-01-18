@@ -5,7 +5,7 @@ const UseCases: React.FC = () => {
 	const useCases = [
 		{
 			title: 'Self-Care Champions',
-			percentage: '15% of our community',
+			percentage: 'Perfect for you',
 			icon: '💝',
 			examples: [
 				'Busy professionals seeking daily grounding',
@@ -15,7 +15,7 @@ const UseCases: React.FC = () => {
 		},
 		{
 			title: 'Thoughtful Gift Givers',
-			percentage: '60% of our community',
+			percentage: 'A meaningful gift',
 			icon: '🎁',
 			examples: [
 				'Supporting loved ones through tough times',
@@ -25,7 +25,7 @@ const UseCases: React.FC = () => {
 		},
 		{
 			title: 'Forward-Thinking Companies',
-			percentage: '15% of our community',
+			percentage: 'For your team',
 			icon: '🏢',
 			examples: [
 				'Employee wellness programs',
@@ -35,7 +35,7 @@ const UseCases: React.FC = () => {
 		},
 		{
 			title: 'Wellness Professionals',
-			percentage: '10% of our community',
+			percentage: 'For your clients',
 			icon: '💚',
 			examples: [
 				'Therapists supporting clients',
@@ -48,8 +48,8 @@ const UseCases: React.FC = () => {
 	return (
 		<section className='use-cases'>
 			<div className='section-header'>
-				<h2>Who Uses Positive Postcards?</h2>
-				<p>Join thousands who are transforming their daily mindset</p>
+				<h2>Who Is Positive Postcards For?</h2>
+				<p>Discover how daily positivity can transform your mindset</p>
 			</div>
 			<div className='use-cases-grid'>
 				{useCases.map((useCase, index) => (

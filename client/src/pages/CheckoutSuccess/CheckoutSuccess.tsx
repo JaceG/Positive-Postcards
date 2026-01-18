@@ -57,8 +57,8 @@ const CheckoutSuccess: React.FC = () => {
 							business days
 						</li>
 						<li>
-							📬 You'll receive a new postcard every day
-							thereafter
+							📬 You'll receive a new postcard every business
+							day thereafter
 						</li>
 						<li>
 							💳 Your subscription will automatically renew based

@@ -52,8 +52,8 @@ const UpsellModal: React.FC<UpsellModalProps> = ({
 							</div>
 							<ul className='benefits'>
 								<li>
-									✓ 30 days of daily affirmations (vs only
-									7)
+									✓ A full month of daily affirmations (vs
+									only 7)
 								</li>
 								<li>
 									✓ Full month to experience

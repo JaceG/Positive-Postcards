@@ -33,7 +33,7 @@ const DownsellModal: React.FC<DownsellModalProps> = ({
 						<div className='trial-features'>
 							<div className='feature'>
 								<span className='icon'>📬</span>
-								<span>7 daily affirmation postcards</span>
+								<span>7-day trial with daily postcards</span>
 							</div>
 							<div className='feature'>
 								<span className='icon'>❌</span>

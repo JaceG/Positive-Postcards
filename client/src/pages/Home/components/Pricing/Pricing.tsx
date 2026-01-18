@@ -83,7 +83,7 @@ const Pricing: React.FC = () => {
 			period: 'Billed monthly',
 			perDay: '$4 per day',
 			features: [
-				'30 unique postcards monthly',
+				'Daily postcards (every business day)',
 				'Beautiful rotating designs',
 				'Premium eco-friendly cardstock',
 				'Free shipping always',
@@ -99,7 +99,7 @@ const Pricing: React.FC = () => {
 			perDay: 'Just $2.20 per day!',
 			savings: 'Save 45% vs Monthly',
 			features: [
-				'90 unique postcards (3 months)',
+				'3 months of daily postcards',
 				'Beautiful rotating designs',
 				'Premium eco-friendly cardstock',
 				'Free shipping always',
@@ -118,7 +118,7 @@ const Pricing: React.FC = () => {
 			perDay: 'Just $2 per day!',
 			savings: 'Save 50% • Founding Member Bonus',
 			features: [
-				'365 unique postcards (full year)',
+				'Full year of daily postcards',
 				'Exclusive annual-only designs',
 				'Premium eco-friendly cardstock',
 				'2 free gift trials included',

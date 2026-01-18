@@ -11,13 +11,13 @@ const BusinessBenefits: React.FC = () => {
 	const benefits: Benefit[] = [
 		{
 			icon: '📊',
-			title: 'ROI & Metrics',
+			title: 'Simple & Effective',
 			features: [
-				'Measurable wellbeing improvement',
-				'Reduced healthcare costs',
-				'Higher employee NPS scores',
-				'Increased client retention rates',
-				'Executive business reviews',
+				'No software to install or manage',
+				'Works for remote and in-office teams',
+				'Tangible appreciation employees keep',
+				'Consistent daily positive touchpoint',
+				'Easy to measure engagement',
 			],
 		},
 		{
@@ -48,9 +48,9 @@ const BusinessBenefits: React.FC = () => {
 		<section className='business-benefits'>
 			<div className='container'>
 				<div className='section-header'>
-					<h2>Why Leading Companies Choose Positive Postcards</h2>
+					<h2>Why Choose Positive Postcards for Business</h2>
 					<p>
-						More than wellness—it's a complete business solution for
+						More than wellness—a simple solution for meaningful
 						human connection
 					</p>
 				</div>
@@ -76,7 +76,7 @@ const BusinessBenefits: React.FC = () => {
 							<p>
 								While digital wellness solutions add to screen
 								fatigue, Positive Postcards creates tangible
-								moments of joy that employees actually treasure.
+								moments of joy that employees can actually hold.
 								No logins, no notifications, no digital
 								overwhelm—just genuine human connection
 								delivered to their hands.
@@ -84,15 +84,15 @@ const BusinessBenefits: React.FC = () => {
 						</div>
 						<div className='highlight-stats'>
 							<div className='highlight-stat'>
-								<div className='stat-value'>94%</div>
+								<div className='stat-value'>Physical</div>
 								<div className='stat-description'>
-									keep every card received
+									tangible cards employees keep
 								</div>
 							</div>
 							<div className='highlight-stat'>
 								<div className='stat-value'>2.5x</div>
 								<div className='stat-description'>
-									stronger emotional impact than digital
+									emotional impact of physical vs digital mail*
 								</div>
 							</div>
 						</div>

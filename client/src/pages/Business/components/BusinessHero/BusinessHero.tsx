@@ -8,7 +8,7 @@ const BusinessHero: React.FC = () => {
 				<div className='business-hero-content'>
 					<div className='hero-text'>
 						<div className='trust-badge'>
-							🏆 Trusted by 500+ companies worldwide
+							🚀 Now Available for Teams
 						</div>
 						<h1>
 							Transform Your{' '}
@@ -20,26 +20,26 @@ const BusinessHero: React.FC = () => {
 							Boost employee wellbeing and strengthen client
 							relationships with the power of positive mail. No
 							apps, no screens—just meaningful connections that
-							drive real business results with measurable ROI.
+							can drive real business results.
 						</p>
 
 						<div className='hero-stats'>
 							<div className='stat'>
-								<div className='stat-number'>87%</div>
+								<div className='stat-number'>2.5x</div>
 								<div className='stat-label'>
-									improved workplace satisfaction
+									physical mail emotional impact vs digital*
 								</div>
 							</div>
 							<div className='stat'>
-								<div className='stat-number'>3x</div>
+								<div className='stat-number'>89%</div>
 								<div className='stat-label'>
-									higher engagement than digital
+									of people feel joy receiving personal mail*
 								</div>
 							</div>
 							<div className='stat'>
-								<div className='stat-number'>34%</div>
+								<div className='stat-number'>$0</div>
 								<div className='stat-label'>
-									reduction in turnover
+									software or IT integration needed
 								</div>
 							</div>
 						</div>
@@ -48,12 +48,12 @@ const BusinessHero: React.FC = () => {
 							<a
 								href='#business-pricing'
 								className='btn btn-primary btn-lg'>
-								Schedule a Demo
+								See Business Pricing
 							</a>
 							<a
-								href='#roi-calculator'
+								href='#how-it-works'
 								className='btn btn-secondary'>
-								Calculate Your ROI
+								How It Works
 							</a>
 						</div>
 					</div>

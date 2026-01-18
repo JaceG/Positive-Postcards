@@ -23,7 +23,7 @@ const BusinessPricing: React.FC = () => {
 			pricePerPerson: '$90',
 			billingCycle: 'per person/month',
 			features: [
-				'Monthly postcards per employee',
+				'Daily postcards per employee',
 				'Basic company branding',
 				'Bulk address upload',
 				'Email support',
@@ -38,9 +38,10 @@ const BusinessPricing: React.FC = () => {
 			features: [
 				'Everything in Starter',
 				'Custom message themes',
-				'Dedicated customer success manager',
+				'Dedicated account manager',
 				'Priority support',
 			],
+			popular: true,
 			ctaText: 'Schedule Demo',
 		},
 		{
