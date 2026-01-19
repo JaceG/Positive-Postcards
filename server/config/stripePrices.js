@@ -17,14 +17,14 @@ const STRIPE_PRICES = {
   promo_downsell_monthly: 'price_1Sr4BoB1RmaIBRsQkDV8zRkf',  // $90 (25% off)
 
   // Business prices (per employee)
-  business_starter: 'price_1Sr4BoB1RmaIBRsQ62ApPhRe',        // $90/person/month
-  business_growth: 'price_1Sr4BpB1RmaIBRsQZCZKF1s0',         // $80/person/month
+  business_starter: 'price_1SrKioB1RmaIBRsQjNXxoYZz',        // $90/person/month
+  business_growth: 'price_1SrKipB1RmaIBRsQ3wLqllDy',         // $80/person/month
 };
 
 // Product IDs
 const STRIPE_PRODUCTS = {
   individual: 'prod_TohaAfB7eFvRTp',
-  business: 'prod_TohbxDQgkXxeE4',
+  business: 'prod_ToygzMxupQd6eK',
 };
 
 // Price amounts (in cents) for reference
