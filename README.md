@@ -1,43 +1,103 @@
-# Positive Postcards - E-commerce Site
+# Positive Postcards - E-commerce Platform
 
-Transform your mindset with daily affirmation postcards delivered to your door. This is the full e-commerce platform for Positive Postcards, a subscription service that delivers beautiful, meaningful mail that creates lasting positive change.
+Transform your mindset with daily affirmation postcards delivered to your door. A full-stack e-commerce platform for a subscription service that delivers beautiful, meaningful mail that creates lasting positive change.
 
-## 🌟 Features
+**Live Site:** [www.positivepost.cards](https://www.positivepost.cards)
 
-- Beautiful, responsive landing page design
-- Full shopping cart functionality with localStorage persistence
-- Secure checkout with Stripe integration
-- Address autocomplete with Google Places API (server-proxied)
+## Features
+
+### Core E-commerce
+- Beautiful, responsive React landing page with modern UI
+- Full shopping cart with localStorage persistence
+- Secure checkout with Stripe payment processing
+- Address autocomplete via Google Places API (server-proxied for security)
 - Subscription and one-time purchase options
-- Business/bulk ordering
-- Customer dashboard for subscription management
-- Email opt-in with promotional offers
-- Upsell/downsell flow with promotional offers
-- Hotjar analytics integration for user behavior tracking
-- **Postmark email service integration** for transactional emails
-- **Postcard Mania API integration** for automated postcard fulfillment
+- Business/bulk ordering for companies
 
-## 🔒 Security
+### Customer Experience
+- **Magic Link Authentication** - passwordless login via secure email links
+- **Customer Dashboard** - subscription management interface
+- **Subscription Controls** - pause, resume, upgrade, downgrade, cancel
+- **Stripe Billing Portal** - update payment methods, view invoices
+- **Upsell/Downsell Flow** - promotional offers and conversion optimization
 
-This application follows security best practices:
-- API keys are properly secured (see [SECURITY.md](SECURITY.md))
-- Google Places API is proxied through the server
-- Stripe secret keys are server-side only
-- Environment variables are used for configuration
-- Build folders are excluded from version control
-- Email service API keys are server-side only
+### Backend Integrations
+- **Stripe** - payment processing, subscriptions, webhooks
+- **Postmark** - transactional email service
+- **Postcard Mania** - automated physical postcard fulfillment
+- **Google Places API** - address autocomplete and verification
+- **Hotjar** - user behavior analytics
 
-## 🚀 Getting Started
+## Tech Stack
+
+| Component | Technology |
+|-----------|------------|
+| Frontend | React 19, TypeScript, React Router 7 |
+| Backend | Node.js, Express |
+| Payments | Stripe |
+| Email | Postmark |
+| Fulfillment | Postcard Mania DirectMail API v3 |
+| Analytics | Hotjar |
+| Hosting | Render |
+
+## Project Structure
+
+```
+positive-postcards-site/
+├── client/                     # React frontend
+│   ├── public/                 # Static assets
+│   └── src/
+│       ├── components/         # Reusable UI components
+│       │   ├── AddressAutocomplete/
+│       │   ├── Cart/
+│       │   ├── CountdownTimer/
+│       │   ├── DownsellModal/
+│       │   ├── EmailOptInForm/
+│       │   ├── Footer/
+│       │   ├── Navigation/
+│       │   ├── PromoOfferBanner/
+│       │   └── UpsellModal/
+│       ├── contexts/           # React contexts (Cart, Auth)
+│       ├── pages/              # Page components
+│       │   ├── AuthVerify/
+│       │   ├── Business/
+│       │   ├── Checkout/
+│       │   ├── CheckoutSuccess/
+│       │   ├── Dashboard/
+│       │   ├── Home/
+│       │   └── Login/
+│       ├── config/             # Configuration (Stripe)
+│       ├── types/              # TypeScript interfaces
+│       └── utils/              # Helpers (API, Hotjar)
+├── server/                     # Express backend
+│   ├── server.js               # Main server file
+│   ├── config/
+│   │   └── stripePrices.js     # Stripe price configuration
+│   ├── services/
+│   │   ├── emailService.js     # Postmark integration
+│   │   └── postcardManiaService.js  # PCM integration
+│   └── scripts/
+│       └── setupStripeProducts.js   # Stripe product setup
+├── markdown/                   # Documentation
+│   ├── README_DASHBOARD.md
+│   ├── README_PCM_INTEGRATION.md
+│   ├── SECURITY.md
+│   └── UPSELL_DOWNSELL_FLOW.md
+└── API_HTML/                   # API documentation
+```
+
+## Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- Stripe account (for payments)
-- Google Cloud Platform account (for Places API)
-- Hotjar account (for analytics)
-- **Postmark account (for transactional emails)**
 
-### Setup
+- Node.js v18 or higher
+- npm
+- Stripe account
+- Google Cloud Platform account (for Places API)
+- Postmark account (for transactional emails)
+- Postcard Mania account (for fulfillment - optional)
+
+### Installation
 
 1. **Clone the repository**
    ```bash
@@ -45,282 +105,208 @@ This application follows security best practices:
    cd positive-postcards-site
    ```
 
-2. **Set up environment variables**
+2. **Install dependencies**
+   ```bash
+   npm run install:all
+   ```
+
+3. **Configure environment variables**
    ```bash
    cp .env.example .env
-   # Edit .env with your actual API keys (see Environment Variables section below)
+   # Edit .env with your API keys
    ```
 
-3. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-4. **Start both servers**
+4. **Start development servers**
    ```bash
    npm run dev
    ```
 
-   This will start:
+   This starts:
    - React development server on http://localhost:3000
    - Express API server on http://localhost:3001
 
-## 📂 Project Structure
+## Environment Variables
 
+Create a `.env` file in the root directory:
+
+```bash
+# Stripe Configuration (Required)
+REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Google Places API (Required for address autocomplete)
+GOOGLE_PLACES_API_KEY=AIza...
+
+# Application URLs
+REACT_APP_API_URL=http://localhost:3001
+NODE_ENV=development
+
+# Postmark Email Service (Required for emails)
+POSTMARK_API_KEY=your_postmark_api_key
+POSTMARK_SERVER_ID=your_postmark_server_id
+EMAIL_FROM=noreply@positivepostcards.com
+
+# Postcard Mania API (Required for fulfillment)
+PCM_API_KEY=your_pcm_api_key
+PCM_API_SECRET=your_pcm_api_secret
+PCM_RETURN_COMPANY=Positive Postcards
+PCM_RETURN_ADDRESS=123 Main Street
+PCM_RETURN_CITY=Clearwater
+PCM_RETURN_STATE=FL
+PCM_RETURN_ZIP=33765
+
+# Analytics (Optional)
+REACT_APP_ENABLE_HOTJAR=false
 ```
-positive-postcards-site/
-├── client/                 # React frontend
-│   ├── public/
-│   ├── src/
-│   │   ├── components/    # Reusable components
-│   │   ├── contexts/      # React contexts (Cart, Auth)
-│   │   ├── pages/         # Page components
-│   │   ├── types/         # TypeScript interfaces
-│   │   ├── utils/         # Helper functions (API, Hotjar)
-│   │   └── config/        # Configuration files
-│   └── package.json
-├── server/                # Express backend
-│   ├── server.js          # Main server file
-│   ├── services/          # Service modules
-│   │   └── emailService.js # Postmark email service
-│   └── package.json
-├── .env.example           # Environment variable template
-├── .gitignore
-├── SECURITY.md           # Security documentation
-└── package.json          # Root package.json
-```
 
-## 🎨 Key Features
+## Pricing Structure
 
-### Shopping Cart
-- Add individual subscriptions (monthly, quarterly, annual)
-- Add business packages
-- Persistent cart using localStorage
-- Real-time price calculations
+### Individual Subscriptions
+| Plan | Price | Per Month |
+|------|-------|-----------|
+| Monthly | $120/month | $120 |
+| Quarterly | $198/quarter | $66 |
+| Annual | $720/year | $60 |
 
-### Checkout
-- Secure payment processing with Stripe
-- Email validation with real-time feedback
-- Address autocomplete (server-proxied for security)
-- Promo code support (demo: "SAVE10" for 10% off)
-- Gift shipping option
-- Save payment method for future use
-- Upsell/downsell modals with promotional offers
-- Complete analytics tracking
+### Promotional Offers
+| Offer | Price | Description |
+|-------|-------|-------------|
+| 7-Day Trial | $7 | Try for 7 days |
+| 50% Off First Month | $60 | Half-price first month |
+| Downsell | $90/month | 25% off standard |
 
-### Subscriptions & Pricing
-- **Monthly**: $60/month
-- **Quarterly**: $99 (best value - $33/month)
-- **Annual**: $360/year ($30/month)
-- **Promotional Offers**:
-  - 7-day trial for $7
-  - 50% off first month ($37.50)
+### Business Plans
+| Plan | Price | Description |
+|------|-------|-------------|
+| Starter | $90/person/month | For small teams |
+| Growth | $80/person/month | Volume discount |
+
+## API Endpoints
+
+### Authentication
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/auth/send-magic-link` | POST | Send login email |
+| `/api/auth/verify` | GET | Verify login token |
+
+### Payments & Subscriptions
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/create-payment-intent` | POST | Create one-time payment |
+| `/api/create-subscription` | POST | Create subscription |
+| `/api/prices` | GET | Get product prices |
+| `/api/cancel-subscription` | POST | Cancel subscription |
+| `/api/create-portal-session` | POST | Stripe billing portal |
+
+### Subscription Management (Authenticated)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/dashboard` | GET | Get customer data |
+| `/api/subscription/current` | GET | Current subscription details |
+| `/api/subscription/plans` | GET | Available plans |
+| `/api/subscription/change-plan` | POST | Upgrade/downgrade |
+| `/api/subscription/preview-change` | POST | Preview proration |
+| `/api/subscription/pause` | POST | Pause subscription |
+| `/api/subscription/resume` | POST | Resume subscription |
+| `/api/subscription/reactivate` | POST | Reactivate cancelled |
+
+### Google Places (Proxied)
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/places/autocomplete` | GET | Address suggestions |
+| `/api/places/details` | GET | Place details |
+
+### Development/Testing Only
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/test-email` | POST | Test email service |
+| `/api/pcm/test` | GET | Test PCM connection |
+| `/api/pcm/designs` | GET | List PCM designs |
+| `/api/pcm/test-order` | POST | Place test order |
+| `/api/pcm/verify-address` | POST | Verify address |
+| `/api/pcm/retry-queue` | GET | View failed orders |
+| `/api/pcm/simulate-subscription` | POST | Simulate campaign |
+
+### Webhooks
+| Endpoint | Events Handled |
+|----------|----------------|
+| `/webhook` | `payment_intent.succeeded`, `subscription.created`, `subscription.updated`, `subscription.deleted`, `invoice.payment_succeeded`, `invoice.payment_failed` |
+
+## Key Features Documentation
+
+### Postcard Mania Integration
+The system uses a **Content Calendar** approach with 365 pre-designed postcards (PP-001 through PP-365). When a customer subscribes, they enter the daily content stream at the current day and receive postcards for their subscription duration.
+
+See [README_PCM_INTEGRATION.md](markdown/README_PCM_INTEGRATION.md) for full setup guide.
 
 ### Email Notifications
-- **Magic link authentication emails** - secure login without passwords
-- **Welcome emails** - sent when subscription is created
-- **Cancellation confirmations** - sent when subscription is cancelled
-- **Payment failure notifications** - sent when payment processing fails
-- **Beautiful HTML templates** with responsive design
-- **Automatic fallback** to demo mode if email service is unavailable
+- **Magic Link Authentication** - secure passwordless login
+- **Welcome Emails** - sent when subscription is created
+- **Cancellation Confirmations** - sent when subscription is cancelled
+- **Payment Failure Notifications** - sent when payment fails
 
-### Analytics & Tracking
-- Hotjar integration for user behavior analysis
-- Event tracking throughout the user journey:
-  - Page visits
-  - Checkout process steps
-  - Upsell/downsell interactions
-  - Error tracking
-  - Conversion funnel analysis
+See [README_DASHBOARD.md](markdown/README_DASHBOARD.md) for dashboard documentation.
 
-## 🛠️ Environment Variables
+### Sales Funnel
+- **$7 Trial Banner** - homepage with 30-minute countdown timer
+- **Upsell Modal** - upgrade trial to 50% off first month
+- **Downsell Modal** - exit intent offer for hesitant customers
 
-Create a `.env` file based on `.env.example` with the following variables:
+See [UPSELL_DOWNSELL_FLOW.md](markdown/UPSELL_DOWNSELL_FLOW.md) for flow documentation.
 
-### Required Variables
+### Security
+- API keys are server-side only
+- Google Places API is proxied through the server
+- Stripe webhooks use signature verification
+- Environment variables for all configuration
 
-```bash
-# Stripe Configuration
-REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_... # From Stripe Dashboard
-STRIPE_SECRET_KEY=sk_test_...                # From Stripe Dashboard (server-side only)
+See [SECURITY.md](markdown/SECURITY.md) for security documentation.
 
-# Google Places API (server-side only for security)
-GOOGLE_PLACES_API_KEY=AIza...               # From Google Cloud Console
-
-# Application Configuration
-REACT_APP_API_URL=http://localhost:3001     # Backend URL
-NODE_ENV=development                         # Environment (development/production)
-
-# Analytics
-REACT_APP_ENABLE_HOTJAR=false              # Set to 'true' to enable in development
-
-# Postmark Email Service
-POSTMARK_API_KEY=your_postmark_api_key      # From Postmark Dashboard
-POSTMARK_SERVER_ID=your_postmark_server_id  # From Postmark Dashboard
-EMAIL_FROM=noreply@positivepostcards.com    # Verified sender address
-
-# Postcard Mania API (for postcard fulfillment)
-PCM_API_KEY=your_pcm_api_key                # From PCM Integrations Portal
-PCM_API_SECRET=your_pcm_api_secret          # From PCM Integrations Portal
-PCM_RETURN_COMPANY=Positive Postcards       # Return address company name
-PCM_RETURN_ADDRESS=123 Main Street          # Return address
-PCM_RETURN_CITY=Clearwater                  # Return address city
-PCM_RETURN_STATE=FL                         # Return address state
-PCM_RETURN_ZIP=33765                        # Return address zip
-```
-
-### Optional Variables
-
-```bash
-# Stripe Webhooks (for production)
-STRIPE_WEBHOOK_SECRET=whsec_...             # Webhook endpoint secret
-```
-
-### Getting API Keys
-
-1. **Stripe Keys**:
-   - Go to [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
-   - Copy your publishable key (safe for client-side)
-   - Copy your secret key (server-side only)
-
-2. **Google Places API**:
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Enable Places API and Maps JavaScript API
-   - Create an API key
-   - **Important**: Set IP restrictions for production
-
-3. **Hotjar**:
-   - Create account at [Hotjar](https://www.hotjar.com/)
-   - Get your Site ID (already configured: 6421588)
-   - Analytics will be automatically enabled in production
-
-4. **Postmark Email Service**:
-   - Create account at [Postmark](https://postmarkapp.com/)
-   - Create a server for transactional emails
-   - Get your API key from the API Tokens section
-   - Get your Server ID from the server settings
-   - **Verify your sender domain** in the Signatures section
-
-5. **Postcard Mania API** (for postcard fulfillment):
-   - Create account at [Postcard Mania](https://www.postcardmania.com/)
-   - Access the [PCM Integrations Portal](https://pcmintegrations.com/)
-   - Go to My Account → API Keys
-   - Generate Sandbox keys for testing (orders not processed)
-   - Generate Production keys for live mailings
-   - **Create 365 designs** named PP-001 through PP-365 in the dashboard
-   - See [README_PCM_INTEGRATION.md](README_PCM_INTEGRATION.md) for full setup guide
-
-## 📊 Analytics Configuration
-
-Hotjar is configured to:
-- **Development**: Disabled by default (set `REACT_APP_ENABLE_HOTJAR=true` to enable)
-- **Production**: Automatically enabled
-
-### Tracked Events
-- Homepage visits and interactions
-- Checkout flow completion/abandonment
-- Upsell/downsell conversions
-- Promo code usage
-- Error occurrences
-- Payment method creation
-- Gift purchases
-
-## 📧 Email Service Configuration
-
-The application uses [Postmark](https://postmarkapp.com/) for reliable transactional email delivery:
-
-### Email Types
-- **Magic Link Authentication** - Secure login emails with 15-minute expiration
-- **Welcome Emails** - Sent automatically when subscriptions are created
-- **Cancellation Confirmations** - Sent when subscriptions are cancelled
-- **Payment Failure Notifications** - Sent when payment processing fails
-
-### Development Mode
-- If Postmark is not configured, emails will show as demo links in the console
-- Test endpoint available: `POST /api/test-email` with types: `test`, `welcome`, `cancellation`, `payment-failed`
-
-### Production Setup
-1. **Verify your domain** in Postmark's Signatures section
-2. **Set up DKIM and SPF records** for better deliverability
-3. **Configure webhooks** (optional) for delivery tracking
-4. **Monitor email analytics** in the Postmark dashboard
-
-## 🏗️ Building for Production
+## Building for Production
 
 1. **Build the client**
    ```bash
    npm run build
    ```
-   This runs `cd client && npm ci && npm run build`
 
-2. **Set production environment variables** in your hosting platform:
-   - Use live Stripe keys instead of test keys
+2. **Configure production environment**
+   - Use live Stripe keys
    - Set `NODE_ENV=production`
    - Configure webhook endpoints
-   - **Add Postmark production API key**
+   - Verify Postmark sender domain
+   - Use production PCM API keys
 
-3. **Start the production server**
+3. **Start production server**
    ```bash
    npm start
    ```
-   This runs the server from `server/server.js`
-
-4. **Deploy** following your hosting provider's instructions
 
 ### Deployment Checklist
 - [ ] Environment variables set in hosting platform
 - [ ] Using production Stripe keys
 - [ ] Google Places API key has IP restrictions
-- [ ] **Postmark domain verified and API key configured**
+- [ ] Postmark domain verified
+- [ ] PCM production keys configured
 - [ ] Webhook endpoints configured
-- [ ] Domain configured (www.positivepost.cards)
 - [ ] SSL certificate enabled
+- [ ] CORS configured for production domain
 
-## 🌐 API Endpoints
-
-### Payment Processing
-- `POST /api/create-payment-intent` - Create one-time payment
-- `POST /api/create-subscription` - Create subscription
-- `GET /api/prices` - Get/create product prices
-- `POST /api/cancel-subscription` - Cancel subscription
-
-### Google Places (Proxied for Security)
-- `GET /api/places/autocomplete` - Address suggestions
-- `GET /api/places/details` - Place details
-
-### Authentication & User Management
-- `POST /api/auth/send-magic-link` - Send login link via email
-- `GET /api/auth/verify` - Verify login token
-- `GET /api/dashboard` - Get customer data
-- `POST /api/create-portal-session` - Stripe billing portal
-
-### Email Service (Development Only)
-- `POST /api/test-email` - Send test emails (available in development mode)
-
-### Postcard Mania (Development Only)
-- `GET /api/pcm/test` - Test PCM API connection
-- `GET /api/pcm/designs` - List all designs from PCM account
-- `POST /api/pcm/test-order` - Place a test postcard order
-- `POST /api/pcm/verify-address` - Verify recipient address
-- `GET /api/pcm/retry-queue` - View failed orders queue
-- `POST /api/pcm/simulate-subscription` - Simulate full subscription campaign
-
-### Webhooks
-- `POST /webhook` - Stripe webhook handler (triggers PCM postcard campaigns)
-
-## 🧪 Testing
+## Testing
 
 ### Test Credit Cards (Stripe Test Mode)
-- **Success**: `4242 4242 4242 4242`
-- **Requires Authentication**: `4000 0025 0000 3155`
-- **Declined**: `4000 0000 0000 9995`
+| Card Number | Result |
+|-------------|--------|
+| `4242 4242 4242 4242` | Success |
+| `4000 0025 0000 3155` | Requires authentication |
+| `4000 0000 0000 9995` | Declined |
 
-Use any future date for expiry and any 3 digits for CVC.
+Use any future expiry date and any 3-digit CVC.
 
 ### Demo Promo Code
-- **SAVE10**: 10% discount on checkout
+- **SAVE10**: 10% discount at checkout
 
-### Email Testing (Development)
+### Email Testing
 ```bash
 # Test basic email
 curl -X POST http://localhost:3001/api/test-email \
@@ -333,42 +319,58 @@ curl -X POST http://localhost:3001/api/test-email \
   -d '{"email":"test@example.com","type":"welcome"}'
 ```
 
-## 🚨 Troubleshooting
+### PCM Testing
+```bash
+# Test connection
+curl http://localhost:3001/api/pcm/test
 
-### Common Issues
+# Simulate subscription campaign
+curl -X POST http://localhost:3001/api/pcm/simulate-subscription \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","firstName":"Jane","lastName":"Smith","duration":7}'
+```
 
-1. **Address autocomplete not working**:
-   - Check Google Places API key is set in server environment
-   - Verify API key has Places API enabled
-   - Check server logs for API errors
+## Troubleshooting
 
-2. **Stripe payments failing**:
-   - Ensure you're using the correct test/live keys
-   - Check webhook configuration
-   - Verify card test numbers
+### Address autocomplete not working
+- Check `GOOGLE_PLACES_API_KEY` is set
+- Verify Places API is enabled in Google Cloud Console
+- Check server logs for API errors
 
-3. **Hotjar not loading**:
-   - Check Site ID configuration in `utils/hotjar.ts`
-   - Verify `REACT_APP_ENABLE_HOTJAR=true` for development
-   - Check browser console for errors
+### Stripe payments failing
+- Verify correct test/live keys are being used
+- Check webhook configuration
+- Ensure webhook secret matches
 
-4. **Emails not sending**:
-   - Verify Postmark API key is correct
-   - Check that sender domain is verified in Postmark
-   - Monitor server logs for email service errors
-   - Ensure `EMAIL_FROM` matches a verified sender signature
+### Emails not sending
+- Verify `POSTMARK_API_KEY` is correct
+- Check sender domain is verified in Postmark
+- Monitor server logs for email service errors
 
-## 🌐 Domain
+### Postcards not being ordered
+- Verify PCM API credentials
+- Check PCM sandbox vs production mode
+- Ensure designs PP-001 through PP-365 exist
 
-The site will be hosted at: **www.positivepost.cards**
+## Scripts
 
-## 🤝 Contributing
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start both servers in development |
+| `npm run client` | Start React dev server only |
+| `npm run server` | Start Express server only |
+| `npm run build` | Build client for production |
+| `npm run render-build` | Full build for Render deployment |
+| `npm start` | Start production server |
+| `npm run install:all` | Install all dependencies |
+
+## Contributing
 
 1. Create a feature branch
 2. Make your changes
 3. Test thoroughly
 4. Submit a pull request
 
-## 📝 License
+## License
 
 © 2026 Positive Postcards. All rights reserved.
