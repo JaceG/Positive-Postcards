@@ -1,8 +1,13 @@
 # Positive Postcards - E-commerce Platform
 
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-green.svg)
+
 Transform your mindset with daily affirmation postcards delivered to your door. A full-stack e-commerce platform for a subscription service that delivers beautiful, meaningful mail that creates lasting positive change.
 
 **Live Site:** [www.positivepost.cards](https://www.positivepost.cards)
+
+![Positive Postcards Homepage](homepage-screenshot.png)
 
 ## Features
 
